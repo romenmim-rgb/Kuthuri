@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>আমাদের কুঠুরি</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1c2b28;--paper:#f6f2ea;--dim:#ece5d8;--teal:#2f6f5c;--dark:#204d40;--gold:#c99a3f;--brick:#b5533b;--in:#fff;--line:rgba(28,43,40,.12)}
+@media (prefers-color-scheme:dark){:root{--ink:#f0ece2;--paper:#141b19;--dim:#1c2522;--in:#22302c;--line:rgba(240,236,226,.12);--dark:#7fc3ad}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:'Hind Siliguri',sans-serif;overflow:hidden}
+.app{height:100%;max-width:480px;margin:0 auto;position:relative}
+.view{position:absolute;inset:0;display:none;flex-direction:column;background:var(--paper)}
+.view.on{display:flex}
+h1,h2{font-family:'Fraunces',serif;color:var(--dark);margin:0}
+.btn{border:0;border-radius:12px;padding:13px 16px;font:600 1rem inherit;font-family:inherit;background:var(--teal);color:#fdfbf6;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--dark);border:1.5px solid var(--line)}
+.btn.sm{padding:8px 12px;font-size:.85rem;border-radius:10px}
+.btn.red{background:var(--brick)}
+input,textarea{font-family:inherit;font-size:1rem;color:var(--ink);background:var(--in);border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;outline:0;width:100%}
+input:focus,textarea:focus{border-color:var(--teal)}
+.err{color:var(--brick);font-size:.85rem;min-height:1.2em}
+/* auth */
+.auth{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:28px}
+.auth h1{font-size:2.2rem}.auth p{margin:0 0 10px;opacity:.65}
+.sw{text-align:center;font-size:.9rem}.sw a{color:var(--dark);font-weight:700;cursor:pointer}
+/* top */
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}
+.tabs{display:flex;gap:6px;padding:0 16px 10px}
+.tab{flex:1;text-align:center;padding:8px;border-radius:10px;font-weight:600;font-size:.9rem;opacity:.55;cursor:pointer}
+.tab.on{background:var(--dim);opacity:1;color:var(--dark)}
+.badge{background:var(--brick);color:#fff;border-radius:10px;font-size:.7rem;padding:1px 7px;margin-left:4px}
+.scroll{flex:1;overflow-y:auto;padding:4px 12px 20px}
+.row{display:flex;align-items:center;gap:12px;padding:11px 8px;border-radius:14px}
+.row.tap{cursor:pointer}.row.tap:active{background:var(--dim)}
+.av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0}
+.grow{flex:1;min-width:0}.grow b{display:block}.grow small{opacity:.6}
+.empty{text-align:center;opacity:.5;padding:50px 20px;font-size:.9rem}
+.sec{font-size:.8rem;opacity:.55;margin:14px 8px 4px}
+.search{display:flex;gap:8px;padding:0 8px}
+/* chat */
+.chead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.chead .back{font-size:1.4rem;cursor:pointer;padding:4px 6px}
+.ib{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:var(--in);font-size:1.05rem;cursor:pointer}
+.msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.b{max-width:78%;padding:9px 13px;border-radius:18px;line-height:1.4;word-wrap:break-word;font-size:.96rem}
+.b.out{align-self:flex-end;background:var(--teal);color:#fdfbf6;border-bottom-right-radius:5px}
+.b.in{align-self:flex-start;background:var(--in);border-bottom-left-radius:5px;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.b img{max-width:220px;width:100%;border-radius:12px;display:block}
+.b small{display:block;font-size:.65rem;opacity:.55;margin-top:3px;text-align:right}
+.comp{display:flex;align-items:flex-end;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.comp textarea{border-radius:20px;resize:none;max-height:100px;padding:10px 15px}
+.pv{display:none;align-items:center;gap:10px;padding:8px 14px;background:var(--dim);font-size:.75rem}
+.pv img{width:44px;height:44px;object-fit:cover;border-radius:8px}
+/* call */
+#call{background:#0f1614;color:#fff;z-index:30}
+#remoteV{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0f1614;border-radius:0;border:0;padding:0}
+#localV{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;width:96px;height:136px;object-fit:cover;border-radius:14px;border:2px solid rgba(255,255,255,.4);padding:0;background:#222}
+.cinfo{position:absolute;top:18%;left:0;right:0;text-align:center;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.cinfo .av{width:90px;height:90px;font-size:2rem;margin:0 auto 12px}
+.cinfo h2{color:#fff;font-size:1.6rem}
+.cbar{position:absolute;bottom:calc(36px + env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:center;gap:22px}
+.cb{width:62px;height:62px;border-radius:50%;border:0;font-size:1.5rem;cursor:pointer;background:rgba(255,255,255,.2);color:#fff}
+.cb.end{background:#d64545}.cb.ok{background:#2fa56b}.cb.off{background:#fff;color:#000}
+#incoming{z-index:40;background:rgba(15,22,20,.96);color:#fff;align-items:center;justify-content:center;gap:10px}
+#incoming h2{color:#fff}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- AUTH -->
+<div class="view on" id="vAuth">
+  <div class="auth">
+    <h1>আমাদের কুঠুরি</h1><p>পরিবারের সবার জন্য চ্যাট ও কল।</p>
+    <input id="aUser" placeholder="username (a-z, 0-9, _)" autocapitalize="off" autocomplete="off">
+    <input id="aName" placeholder="আপনার নাম (যেমন: রহিম ভাই)" style="display:none">
+    <input id="aPin" type="password" inputmode="numeric" maxlength="6" placeholder="৬ সংখ্যার PIN">
+    <div class="err" id="aErr"></div>
+    <button class="btn" id="aGo">প্রবেশ করুন</button>
+    <div class="sw"><span id="aSwTxt">নতুন?</span> <a id="aSw">অ্যাকাউন্ট তৈরি করুন</a></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="view" id="vMain">
+  <div class="top"><h2>আমাদের কুঠুরি</h2><button class="btn ghost sm" id="logout">লগ আউট</button></div>
+  <div class="tabs">
+    <div class="tab on" data-t="friends">চ্যাট</div>
+    <div class="tab" id="tabAdmin" data-t="admin" style="display:none">অ্যাডমিন</div>
+    <div class="tab" data-t="reqs">বন্ধু যোগ <span class="badge" id="reqBadge" style="display:none"></span></div>
+  </div>
+  <div class="scroll" id="tFriends"></div>
+  <div class="scroll" id="tAdmin" style="display:none"></div>
+  <div class="scroll" id="tReqs" style="display:none">
+    <div class="sec">Username দিয়ে খুঁজুন</div>
+    <div class="search"><input id="sQ" placeholder="exact username" autocapitalize="off"><button class="btn" id="sGo">খুঁজুন</button></div>
+    <div id="sRes"></div>
+    <div class="sec">আসা রিকোয়েস্ট</div>
+    <div id="reqList"></div>
+    <div class="sec" style="margin-top:20px">আপনার username: <b id="myUname"></b></div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="view" id="vChat">
+  <div class="chead">
+    <div class="back" id="cBack">←</div>
+    <div class="av" id="cAv" style="width:38px;height:38px;font-size:.9rem"></div>
+    <div class="grow"><b id="cName"></b></div>
+    <button class="ib" id="cVoice">📞</button>
+    <button class="ib" id="cVideo">🎥</button>
+  </div>
+  <div class="msgs" id="msgs"></div>
+  <div class="pv" id="pv"><img id="pvImg"><span id="pvNote"></span><span style="margin-left:auto;cursor:pointer" id="pvX">✕</span></div>
+  <div class="comp">
+    <button class="ib" id="attach">📎</button>
+    <input type="file" id="file" accept="image/*" style="display:none">
+    <textarea id="mIn" rows="1" placeholder="মেসেজ লিখুন..."></textarea>
+    <button class="ib" id="send" style="background:var(--teal);color:#fff;border:0">➤</button>
+  </div>
+</div>
+
+<!-- CALL -->
+<div class="view" id="call">
+  <video id="remoteV" autoplay playsinline></video>
+  <video id="localV" autoplay playsinline muted></video>
+  <div class="cinfo"><div class="av" id="callAv"></div><h2 id="callName"></h2><div id="callStat"></div></div>
+  <div class="cbar">
+    <button class="cb" id="muteB">🎤</button>
+    <button class="cb end" id="endB">✕</button>
+    <button class="cb" id="camB">📷</button>
+  </div>
+</div>
+
+<!-- INCOMING -->
+<div class="view" id="incoming">
+  <div class="av" id="inAv" style="width:96px;height:96px;font-size:2.2rem"></div>
+  <h2 id="inName"></h2><div id="inType" style="opacity:.7"></div>
+  <div class="cbar" style="position:static;margin-top:40px">
+    <button class="cb end" id="decB">✕</button>
+    <button class="cb ok" id="accB">📞</button>
+  </div>
+</div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, addDoc, query, where, orderBy, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ====== ১. এখানে আপনার Firebase config বসান (README দেখুন) ====== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAVDkA1pCiZVy3ef_RZ6srsDqyNRXeGE30",
+  authDomain: "amader-kuthuri.firebaseapp.com",
+  projectId: "amader-kuthuri",
+  storageBucket: "amader-kuthuri.firebasestorage.app",
+  messagingSenderId: "654868196488",
+  appId: "1:654868196488:web:2f35754a863885cf17433d"
+};
+/* ====== ২. দুই জন আলাদা নেটওয়ার্কে থাকলে TURN লাগতে পারে (README দেখুন) ====== */
+const ICE = { iceServers: [
+  { urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }
+  // { urls: "turn:YOUR_TURN_HOST:80", username: "USER", credential: "PASS" }
+]};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const COLORS = ['#2f6f5c','#b5533b','#c99a3f','#5a6fb0','#8a5aa8','#3d8fa0'];
+const color = n => COLORS[[...n].reduce((h,c)=>(h*31+c.charCodeAt(0))%6,0)];
+const ini = n => (n||'?').trim().slice(0,1);
+function view(id){ document.querySelectorAll('.view').forEach(v=>{ if(!['call','incoming'].includes(v.id)) v.classList.remove('on'); }); $(id).classList.add('on'); }
+
+const ADMIN_USERNAME = 'romen';
+let me = null, friends = {}, unsubs = [], registering = false, curFriend = null, chatUnsub = null, pending = null;
+
+/* ================= AUTH ================= */
+let reg = false;
+$('aSw').onclick = () => {
+  reg = !reg;
+  $('aName').style.display = reg ? '' : 'none';
+  $('aGo').textContent = reg ? 'অ্যাকাউন্ট তৈরি করুন' : 'প্রবেশ করুন';
+  $('aSw').textContent = reg ? 'লগ ইন করুন' : 'অ্যাকাউন্ট তৈরি করুন';
+  $('aSwTxt').textContent = reg ? 'আগে থেকে আছে?' : 'নতুন?';
+  $('aErr').textContent = '';
+};
+const emailOf = u => `${u}@ghoroa.app`;
+
+$('aGo').onclick = async () => {
+  const u = $('aUser').value.trim().toLowerCase(), pin = $('aPin').value.trim(), name = $('aName').value.trim();
+  const err = $('aErr'); err.textContent = '';
+  if(!/^[a-z0-9_]{3,20}$/.test(u)) return err.textContent = 'Username: ৩-২০ অক্ষর, শুধু a-z, 0-9, _';
+  if(!/^\d{6}$/.test(pin)) return err.textContent = 'PIN অবশ্যই ৬ সংখ্যার হতে হবে।';
+  $('aGo').disabled = true;
+  try{
+    if(reg){
+      if(!name) throw {code:'x', message:'আপনার নাম দিন।'};
+      if((await getDoc(doc(db,'usernames',u))).exists()) throw {code:'x', message:'এই username আগে থেকেই আছে।'};
+      registering = true;
+      const cred = await createUserWithEmailAndPassword(auth, emailOf(u), pin);
+      await setDoc(doc(db,'usernames',u), { uid: cred.user.uid });
+      await setDoc(doc(db,'users',cred.user.uid), { username: u, displayName: name });
+      registering = false;
+      await boot(cred.user);
+    } else {
+      await signInWithEmailAndPassword(auth, emailOf(u), pin);
+    }
+  }catch(e){
+    registering = false;
+    const map = {'auth/invalid-credential':'Username বা PIN ভুল।','auth/user-not-found':'এই username এ অ্যাকাউন্ট নেই।','auth/wrong-password':'ভুল PIN।','auth/email-already-in-use':'এই username আগে থেকেই আছে।','auth/too-many-requests':'অনেকবার চেষ্টা হয়েছে, একটু পরে আবার করুন।'};
+    err.textContent = map[e.code] || e.message || 'কিছু একটা ভুল হয়েছে।';
+  }
+  $('aGo').disabled = false;
+};
+
+onAuthStateChanged(auth, async user => {
+  if(user && !registering) await boot(user);
+  if(!user){ cleanupAll(); view('vAuth'); }
+});
+$('logout').onclick = () => signOut(auth);
+
+async function boot(user){
+  const snap = await getDoc(doc(db,'users',user.uid));
+  if(!snap.exists()) return;
+  me = { uid: user.uid, ...snap.data() };
+  $('myUname').textContent = me.username;
+  $('tabAdmin').style.display = me.username === ADMIN_USERNAME ? '' : 'none';
+  view('vMain');
+  startListeners();
+}
+function cleanupAll(){ unsubs.forEach(f=>f()); unsubs=[]; if(chatUnsub) chatUnsub(); me=null; friends={}; }
+
+/* ================= LISTENERS ================= */
+function startListeners(){
+  unsubs.forEach(f=>f()); unsubs=[];
+  unsubs.push(onSnapshot(collection(db,'users',me.uid,'friends'), s => {
+    friends = {}; s.forEach(d => friends[d.id] = d.data());
+    renderFriends();
+  }));
+  unsubs.push(onSnapshot(query(collection(db,'requests'), where('to','==',me.uid)), s => {
+    const list = s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.status==='pending');
+    renderReqs(list);
+  }));
+  unsubs.push(onSnapshot(query(collection(db,'calls'), where('callee','==',me.uid), where('status','==','ringing')), s => {
+    s.docChanges().forEach(ch => {
+      if(ch.type !== 'added') return;
+      const c = ch.doc.data();
+      if(Date.now() - (c.created||0) > 45000) return;      // পুরনো call বাদ
+      if(callState) return;                                 // আগে থেকেই call এ
+      showIncoming(ch.doc.id, c);
+    });
+  }));
+}
+
+/* ================= TABS / FRIENDS ================= */
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x===t));
+  $('tFriends').style.display = t.dataset.t==='friends' ? '' : 'none';
+  $('tReqs').style.display = t.dataset.t==='reqs' ? '' : 'none';
+  $('tAdmin').style.display = t.dataset.t==='admin' ? '' : 'none';
+  if(t.dataset.t==='admin') loadAdmin();
+});
+
+function renderFriends(){
+  const ids = Object.keys(friends);
+  $('tFriends').innerHTML = ids.length ? ids.map(id => `
+    <div class="row tap" data-id="${id}">
+      <div class="av" style="background:${color(friends[id].displayName)}">${esc(ini(friends[id].displayName))}</div>
+      <div class="grow"><b>${esc(friends[id].displayName)}</b><small>@${esc(friends[id].username)}</small></div>
+    </div>`).join('') : `<div class="empty">এখনো কোনো বন্ধু নেই।<br>"বন্ধু যোগ" ট্যাবে username দিয়ে খুঁজুন।</div>`;
+  $('tFriends').querySelectorAll('.row').forEach(r => r.onclick = () => openChat(r.dataset.id));
+}
+
+/* ================= ADMIN (শুধু romen) ================= */
+async function loadAdmin(){
+  const box = $('tAdmin');
+  box.innerHTML = '<div class="empty">লোড হচ্ছে...</div>';
+  try{
+    const us = await getDocs(collection(db,'users'));
+    const rows = await Promise.all(us.docs.map(async d => {
+      const f = await getDocs(collection(db,'users',d.id,'friends'));
+      return { u: d.data(), friends: f.docs.map(x => x.data()) };
+    }));
+    rows.sort((a,b) => b.friends.length - a.friends.length);
+    box.innerHTML = `<div class="sec">মোট সদস্য: ${rows.length}</div>` + rows.map(r => `
+      <div class="row" style="align-items:flex-start">
+        <div class="av" style="background:${color(r.u.displayName)}">${esc(ini(r.u.displayName))}</div>
+        <div class="grow">
+          <b>${esc(r.u.displayName)} <small>@${esc(r.u.username)}</small></b>
+          <small>${r.friends.length} জন বন্ধু</small>
+          <div style="font-size:.85rem;margin-top:3px">${r.friends.length ? r.friends.map(x => esc(x.displayName)).join(', ') : '<span style="opacity:.5">কোনো বন্ধু নেই</span>'}</div>
+        </div>
+      </div>`).join('') + '<div style="padding:10px 8px"><button class="btn ghost sm" id="admRef">রিফ্রেশ</button></div>';
+    $('admRef').onclick = loadAdmin;
+  }catch(e){ box.innerHTML = '<div class="empty">অ্যাডমিন অ্যাক্সেস নেই বা rules আপডেট হয়নি।</div>'; }
+}
+
+/* ================= FRIEND REQUESTS ================= */
+$('sGo').onclick = async () => {
+  const q = $('sQ').value.trim().toLowerCase(); const box = $('sRes');
+  if(!q) return;
+  box.innerHTML = '<div class="empty">খুঁজছি...</div>';
+  try{
+    const u = await getDoc(doc(db,'usernames',q));
+    if(!u.exists()) return box.innerHTML = '<div class="empty">এই username এ কেউ নেই।</div>';
+    const uid = u.data().uid;
+    if(uid === me.uid) return box.innerHTML = '<div class="empty">এটা আপনার নিজের username।</div>';
+    const p = (await getDoc(doc(db,'users',uid))).data();
+    const already = !!friends[uid];
+    box.innerHTML = `<div class="row">
+      <div class="av" style="background:${color(p.displayName)}">${esc(ini(p.displayName))}</div>
+      <div class="grow"><b>${esc(p.displayName)}</b><small>@${esc(p.username)}</small></div>
+      ${already ? '<small>বন্ধু ✓</small>' : '<button class="btn sm" id="reqBtn">Request</button>'}</div>`;
+    if(!already) $('reqBtn').onclick = async () => {
+      try{
+        await setDoc(doc(db,'requests',`${me.uid}_${uid}`), { from: me.uid, to: uid, fromName: me.displayName, fromUsername: me.username, status: 'pending' });
+        $('reqBtn').outerHTML = '<small>পাঠানো হয়েছে ✓</small>';
+      }catch(e){ $('reqBtn').outerHTML = '<small>আগেই পাঠানো হয়েছে</small>'; }
+    };
+  }catch(e){ box.innerHTML = '<div class="empty">খোঁজা যায়নি, আবার চেষ্টা করুন।</div>'; }
+};
+
+function renderReqs(list){
+  $('reqBadge').style.display = list.length ? '' : 'none';
+  $('reqBadge').textContent = list.length;
+  $('reqList').innerHTML = list.length ? list.map(r => `
+    <div class="row">
+      <div class="av" style="background:${color(r.fromName)}">${esc(ini(r.fromName))}</div>
+      <div class="grow"><b>${esc(r.fromName)}</b><small>@${esc(r.fromUsername)}</small></div>
+      <button class="btn sm" data-a="${r.id}">Accept</button>
+      <button class="btn sm ghost" data-r="${r.id}">✕</button>
+    </div>`).join('') : '<div class="empty">কোনো রিকোয়েস্ট নেই।</div>';
+  $('reqList').querySelectorAll('[data-a]').forEach(b => b.onclick = () => accept(list.find(r=>r.id===b.dataset.a)));
+  $('reqList').querySelectorAll('[data-r]').forEach(b => b.onclick = () => deleteDoc(doc(db,'requests',b.dataset.r)));
+}
+async function accept(r){
+  const batch = writeBatch(db);
+  batch.update(doc(db,'requests',r.id), { status: 'accepted' });
+  batch.set(doc(db,'users',me.uid,'friends',r.from), { username: r.fromUsername, displayName: r.fromName });
+  batch.set(doc(db,'users',r.from,'friends',me.uid), { username: me.username, displayName: me.displayName });
+  await batch.commit();
+  await deleteDoc(doc(db,'requests',r.id)).catch(()=>{});
+}
+
+/* ================= CHAT ================= */
+const chatId = (a,b) => [a,b].sort().join('_');
+
+async function openChat(fid){
+  curFriend = { id: fid, ...friends[fid] };
+  $('cName').textContent = curFriend.displayName;
+  const av = $('cAv'); av.textContent = ini(curFriend.displayName); av.style.background = color(curFriend.displayName);
+  $('msgs').innerHTML = ''; pending = null; $('pv').style.display = 'none';
+  view('vChat');
+  const cid = chatId(me.uid, fid), cref = doc(db,'chats',cid);
+  try{ if(!(await getDoc(cref)).exists()) await setDoc(cref, { members: [me.uid, fid] }); }catch(e){ console.error(e); }
+  if(chatUnsub) chatUnsub();
+  chatUnsub = onSnapshot(query(collection(db,'chats',cid,'messages'), orderBy('ts')), s => {
+    const box = $('msgs');
+    box.innerHTML = s.docs.map(d => {
+      const m = d.data(), out = m.from === me.uid;
+      const t = new Date(m.ts).toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});
+      return `<div class="b ${out?'out':'in'}">${m.photo?`<img src="${m.photo}">`:''}${m.text?`<span>${esc(m.text)}</span>`:''}<small>${t}</small></div>`;
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  });
+}
+$('cBack').onclick = () => { if(chatUnsub){ chatUnsub(); chatUnsub=null; } curFriend=null; view('vMain'); };
+
+async function sendMsg(){
+  const text = $('mIn').value.trim();
+  if(!text && !pending) return;
+  const data = { from: me.uid, ts: Date.now() };
+  if(text) data.text = text;
+  if(pending) data.photo = pending;
+  $('mIn').value = ''; pending = null; $('pv').style.display = 'none';
+  try{ await addDoc(collection(db,'chats',chatId(me.uid,curFriend.id),'messages'), data); }
+  catch(e){ alert('মেসেজ পাঠানো যায়নি: ' + e.message); }
+}
+$('send').onclick = sendMsg;
+$('mIn').addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); }});
+
+/* photo + auto compress */
+$('attach').onclick = () => $('file').click();
+$('pvX').onclick = () => { pending = null; $('pv').style.display = 'none'; };
+$('file').onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const img = new Image();
+  img.onload = () => {
+    let maxW = 900, q = 0.7, out;
+    do{
+      const sc = Math.min(1, maxW / img.width), c = document.createElement('canvas');
+      c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      out = c.toDataURL('image/jpeg', q); maxW *= .8; q -= .08;
+    } while(out.length > 700000 && maxW > 200);   // Firestore doc limit 1MB
+    pending = out;
+    $('pvImg').src = out;
+    $('pvNote').textContent = `${Math.round(f.size/1024)}KB → ${Math.round(out.length*.75/1024)}KB`;
+    $('pv').style.display = 'flex';
+  };
+  img.src = URL.createObjectURL(f); e.target.value = '';
+};
+
+/* ================= CALLING (WebRTC + Firestore signaling) ================= */
+let callState = null; // { id, pc, local, role, unsubs[], video, timer }
+let ringT = null, ringI = null;
+
+function ring(on){
+  clearInterval(ringI); ringI = null;
+  if(!on) return;
+  try{
+    const ctx = ring.ctx || (ring.ctx = new (window.AudioContext||window.webkitAudioContext)());
+    ringI = setInterval(() => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = 480; g.gain.value = .15; o.connect(g); g.connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime + .4);
+      navigator.vibrate && navigator.vibrate(300);
+    }, 1500);
+  }catch(e){}
+}
+
+function showCallUI(name, video, stat){
+  $('callName').textContent = name; $('callStat').textContent = stat;
+  const av = $('callAv'); av.textContent = ini(name); av.style.background = color(name);
+  $('camB').style.display = video ? '' : 'none';
+  $('localV').style.display = video ? '' : 'none';
+  $('call').classList.add('on');
+}
+
+async function getMedia(video){
+  return navigator.mediaDevices.getUserMedia({ audio: true, video: video ? { facingMode: 'user' } : false });
+}
+
+function makePC(local, remoteTrackCb){
+  const pc = new RTCPeerConnection(ICE);
+  local.getTracks().forEach(t => pc.addTrack(t, local));
+  const remote = new MediaStream();
+  pc.ontrack = e => { e.streams[0].getTracks().forEach(t => remote.addTrack(t)); $('remoteV').srcObject = remote; remoteTrackCb && remoteTrackCb(); };
+  return pc;
+}
+
+async function startCall(video){
+  if(callState || !curFriend) return;
+  let local;
+  try{ local = await getMedia(video); }catch(e){ return alert('মাইক/ক্যামেরার permission দিন।'); }
+  $('localV').srcObject = local;
+  const f = curFriend;
+  showCallUI(f.displayName, video, 'রিং হচ্ছে...');
+  const callRef = doc(collection(db,'calls'));
+  const pc = makePC(local, () => $('callStat').textContent = '');
+  callState = { id: callRef.id, pc, local, role: 'caller', unsubs: [], video };
+  pc.onicecandidate = e => e.candidate && addDoc(collection(callRef,'callerCandidates'), e.candidate.toJSON());
+  pc.onconnectionstatechange = () => { if(['failed','disconnected'].includes(pc.connectionState)) $('callStat').textContent = 'নেটওয়ার্ক সমস্যা...'; if(pc.connectionState==='connected') $('callStat').textContent=''; };
+  const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+  await setDoc(callRef, { caller: me.uid, callee: f.id, callerName: me.displayName, video, status: 'ringing', created: Date.now(), offer: { type: offer.type, sdp: offer.sdp } });
+  ring(true);
+  callState.unsubs.push(onSnapshot(callRef, async s => {
+    const d = s.data(); if(!d) return;
+    if(d.answer && !pc.currentRemoteDescription){ ring(false); $('callStat').textContent='সংযোগ হচ্ছে...'; await pc.setRemoteDescription(d.answer); }
+    if(d.status === 'declined'){ $('callStat').textContent='কল রিসিভ হয়নি'; endCall(false, 1200); }
+    if(d.status === 'ended') endCall(false);
+  }));
+  callState.unsubs.push(onSnapshot(collection(callRef,'calleeCandidates'), s => s.docChanges().forEach(c => c.type==='added' && pc.addIceCandidate(c.doc.data()).catch(()=>{}))));
+  callState.timer = setTimeout(() => { if(callState && !pc.currentRemoteDescription){ $('callStat').textContent='কেউ ধরেনি'; endCall(true, 1200); } }, 45000);
+}
+
+let inc = null;
+function showIncoming(id, c){
+  inc = { id, c };
+  $('inName').textContent = c.callerName; $('inType').textContent = c.video ? 'ভিডিও কল' : 'ভয়েস কল';
+  const av = $('inAv'); av.textContent = ini(c.callerName); av.style.background = color(c.callerName);
+  $('incoming').classList.add('on'); ring(true);
+}
+$('decB').onclick = async () => {
+  ring(false); $('incoming').classList.remove('on');
+  if(inc) await updateDoc(doc(db,'calls',inc.id), { status: 'declined' }).catch(()=>{});
+  inc = null;
+};
+$('accB').onclick = async () => {
+  ring(false); $('incoming').classList.remove('on');
+  const { id, c } = inc; inc = null;
+  let local;
+  try{ local = await getMedia(c.video); }catch(e){ updateDoc(doc(db,'calls',id),{status:'declined'}); return alert('মাইক/ক্যামেরার permission দিন।'); }
+  $('localV').srcObject = local;
+  showCallUI(c.callerName, c.video, 'সংযোগ হচ্ছে...');
+  const callRef = doc(db,'calls',id);
+  const pc = makePC(local, () => $('callStat').textContent = '');
+  callState = { id, pc, local, role: 'callee', unsubs: [], video: c.video };
+  pc.onicecandidate = e => e.candidate && addDoc(collection(callRef,'calleeCandidates'), e.candidate.toJSON());
+  await pc.setRemoteDescription(c.offer);
+  const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
+  await updateDoc(callRef, { answer: { type: ans.type, sdp: ans.sdp }, status: 'active' });
+  callState.unsubs.push(onSnapshot(collection(callRef,'callerCandidates'), s => s.docChanges().forEach(ch => ch.type==='added' && pc.addIceCandidate(ch.doc.data()).catch(()=>{}))));
+  callState.unsubs.push(onSnapshot(callRef, s => { const d = s.data(); if(d && d.status === 'ended') endCall(false); }));
+};
+
+function endCall(notify = true, delay = 0){
+  const cs = callState; if(!cs) return;
+  callState = null; ring(false); clearTimeout(cs.timer);
+  if(notify) updateDoc(doc(db,'calls',cs.id), { status: 'ended' }).catch(()=>{});
+  setTimeout(() => {
+    cs.unsubs.forEach(f=>f());
+    cs.local.getTracks().forEach(t=>t.stop());
+    cs.pc.close();
+    $('remoteV').srcObject = null; $('localV').srcObject = null;
+    $('call').classList.remove('on');
+    $('muteB').classList.remove('off'); $('camB').classList.remove('off');
+  }, delay);
+}
+$('endB').onclick = () => endCall(true);
+$('muteB').onclick = () => { if(!callState) return; const t = callState.local.getAudioTracks()[0]; t.enabled = !t.enabled; $('muteB').classList.toggle('off', !t.enabled); };
+$('camB').onclick = () => { if(!callState) return; const t = callState.local.getVideoTracks()[0]; if(!t) return; t.enabled = !t.enabled; $('camB').classList.toggle('off', !t.enabled); };
+$('cVoice').onclick = () => startCall(false);
+$('cVideo').onclick = () => startCall(true);
+</script>
+</body>
+</html>
