@@ -61,6 +61,7 @@ input:focus,textarea:focus{border-color:var(--teal)}
 .b.in{align-self:flex-start;background:var(--in);border-bottom-left-radius:5px;box-shadow:0 1px 2px rgba(0,0,0,.07)}
 .b img{max-width:220px;width:100%;border-radius:12px;display:block;margin-bottom:3px}
 .b small{display:block;font-size:.65rem;opacity:.65;margin-top:3px;text-align:right}
+.note{align-self:center;font-size:.72rem;opacity:.6;background:var(--dim);padding:4px 12px;border-radius:14px;text-align:center}
 .tk.seen{color:#7fe3ff;opacity:1}
 .comp{display:flex;align-items:flex-end;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
 .comp textarea{border-radius:20px;resize:none;max-height:100px;padding:10px 15px}
@@ -98,6 +99,7 @@ input:focus,textarea:focus{border-color:var(--teal)}
     <input id="aName" placeholder="Your name (e.g. Rahim Bhai)" style="display:none" autocomplete="off">
     <input id="aCode" placeholder="Family code (ask the admin)" style="display:none" autocomplete="off" autocapitalize="off">
     <input id="aPin" type="password" inputmode="numeric" maxlength="6" placeholder="6-digit PIN" autocomplete="new-password">
+    <div class="swrow" style="margin:0 2px"><span>Keep me logged in</span><input type="checkbox" id="aKeep" checked></div>
     <div class="err" id="aErr"></div>
     <button class="btn" id="aGo">Log in</button>
     <div class="sw"><span id="aSwTxt">New here?</span> <a id="aSw">Create account</a></div>
@@ -183,6 +185,7 @@ input:focus,textarea:focus{border-color:var(--teal)}
     <div class="who" id="cWho"><div id="cAv"></div><div class="grow"><b id="cName"></b><small id="cSub"></small></div></div>
     <button class="ib" id="cVoice">📞</button>
     <button class="ib" id="cVideo">🎥</button>
+    <button class="ib" id="cMenu">⋮</button>
   </div>
   <div class="msgs" id="msgs"></div>
   <div class="pv" id="pv"><img id="pvImg"><span id="pvNote"></span><span style="margin-left:auto;cursor:pointer;padding:6px" id="pvX">✕</span></div>
@@ -222,8 +225,8 @@ input:focus,textarea:focus{border-color:var(--teal)}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, addDoc, query, where, orderBy, onSnapshot, writeBatch, increment, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, updatePassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, addDoc, query, where, orderBy, onSnapshot, writeBatch, increment, deleteField, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* ====== Firebase config ====== */
 const firebaseConfig = {
@@ -242,8 +245,10 @@ const ICE = { iceServers: [
   // { urls: "turn:YOUR_TURN_HOST:80", username: "USER", credential: "PASS" }
 ]};
 const ADMIN_USERNAME = 'romen';
+const RETENTION_MS = 3 * 24 * 60 * 60 * 1000;   // messages are deleted after 3 days
 
 const app = initializeApp(firebaseConfig);
+if('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
 const auth = getAuth(app);
 const db = getFirestore(app);
 const $ = id => document.getElementById(id);
@@ -354,6 +359,7 @@ $('aGo').onclick = async () => {
   if(!/^\d{6}$/.test(pin)) return err.textContent = 'PIN must be exactly 6 digits.';
   $('aGo').disabled = true;
   try{
+    await setPersistence(auth, $('aKeep').checked ? browserLocalPersistence : browserSessionPersistence);
     if(reg){
       if(!name) throw {message:'Please enter your name.'};
       if((await getDoc(doc(db,'usernames',u))).exists()) throw {message:'This username is already taken.'};
@@ -533,10 +539,12 @@ function renderHome(){
   ids.sort((a,b) => (c(b).lastTs||0) - (c(a).lastTs||0) || String(prof(a).displayName).localeCompare(String(prof(b).displayName)));
   $('chatList').innerHTML = ids.length ? ids.map(id => {
     const p = prof(id), ch = c(id), un = (ch.unread && ch.unread[me.uid]) || 0;
-    const pre = ch.lastText ? (ch.lastFrom === me.uid ? 'You: ' : '') + ch.lastText : (statusOf(p) || 'Say hi 👋');
+    const clr = (ch.clearedAt || {})[me.uid] || 0;
+    const live = ch.lastText && ch.lastTs >= Date.now() - RETENTION_MS && ch.lastTs > clr;
+    const pre = live ? (ch.lastFrom === me.uid ? 'You: ' : '') + ch.lastText : (statusOf(p) || 'Say hi 👋');
     return `<div class="row tap" data-id="${id}">${avatar(p)}
       <div class="grow"><b>${esc(p.displayName)}</b><small class="pre">${esc(pre)}</small></div>
-      <div class="meta">${ch.lastTs ? `<small>${timeShort(ch.lastTs)}</small>` : ''}${un ? `<span class="ub">${un}</span>` : ''}</div></div>`;
+      <div class="meta">${live ? `<small>${timeShort(ch.lastTs)}</small>` : ''}${un ? `<span class="ub">${un}</span>` : ''}</div></div>`;
   }).join('') : `<div class="empty">No chats yet.<br>Tap 👤 at the top to add family members.</div>`;
   $('chatList').querySelectorAll('.row').forEach(r => r.onclick = () => openChat(r.dataset.id));
 }
@@ -699,21 +707,30 @@ async function openChat(fid){
   if(chatUnsub) chatUnsub();
   chatUnsub = onSnapshot(query(collection(db,'chats',cid,'messages'), orderBy('ts')), { includeMetadataChanges: true }, s => {
     lastSnap = s;
-    const box = $('msgs'), nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
-    box.innerHTML = s.docs.map(d => {
-      const m = d.data(), out = m.from === me.uid;
-      const t = new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const tick = !out ? '' : d.metadata.hasPendingWrites ? ' <span class="tk">🕓</span>' : m.seen ? ' <span class="tk seen">✓✓</span>' : ' <span class="tk">✓</span>';
-      return `<div class="b ${out ? 'out' : 'in'}" data-id="${d.id}" data-out="${out ? 1 : 0}">${m.photo ? `<img src="${m.photo}">` : ''}${m.text ? `<span>${esc(m.text)}</span>` : ''}<small>${t}${tick}</small></div>`;
-    }).join('');
-    box.querySelectorAll('.b[data-out="1"]').forEach(el => el.onclick = () => askDelete(el.dataset.id));
-    if(nearBottom || !box.dataset.init){ box.scrollTop = box.scrollHeight; box.dataset.init = '1'; }
+    renderMsgs(s);
     markSeen(s);
   });
 }
+function renderMsgs(s){
+  if(!s || !curFriend) return;
+  const cid = chatId(me.uid, curFriend.id);
+  const cutoff = Date.now() - RETENTION_MS, clr = ((chats[cid] || {}).clearedAt || {})[me.uid] || 0;
+  const expired = s.docs.filter(d => (d.data().ts || 0) < cutoff && !d.metadata.hasPendingWrites);
+  if(expired.length){ const b = writeBatch(db); expired.slice(0, 400).forEach(d => b.delete(d.ref)); b.commit().catch(()=>{}); }
+  const visible = s.docs.filter(d => { const t = d.data().ts || 0; return t >= cutoff && t > clr; });
+  const box = $('msgs'), nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
+  box.innerHTML = '<div class="note">Messages are deleted automatically after 3 days</div>' + visible.map(d => {
+    const m = d.data(), out = m.from === me.uid;
+    const t = new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const tick = !out ? '' : d.metadata.hasPendingWrites ? ' <span class="tk">🕓</span>' : m.seen ? ' <span class="tk seen">✓✓</span>' : ' <span class="tk">✓</span>';
+    return `<div class="b ${out ? 'out' : 'in'}" data-id="${d.id}" data-out="${out ? 1 : 0}">${m.photo ? `<img src="${m.photo}">` : ''}${m.text ? `<span>${esc(m.text)}</span>` : ''}<small>${t}${tick}</small></div>`;
+  }).join('');
+  box.querySelectorAll('.b[data-out="1"]').forEach(el => el.onclick = () => askDelete(el.dataset.id));
+  if(nearBottom || !box.dataset.init){ box.scrollTop = box.scrollHeight; box.dataset.init = '1'; }
+}
 function markSeen(s){
   if(document.hidden || !curFriend || !s) return;
-  const unseen = s.docs.filter(d => { const m = d.data(); return m.from !== me.uid && !m.seen && !d.metadata.hasPendingWrites; });
+  const unseen = s.docs.filter(d => { const m = d.data(); return m.from !== me.uid && !m.seen && !d.metadata.hasPendingWrites && (m.ts || 0) >= Date.now() - RETENTION_MS; });
   if(!unseen.length) return;
   const b = writeBatch(db);
   unseen.forEach(d => b.update(d.ref, { seen: true, seenAt: Date.now() }));
@@ -732,11 +749,50 @@ function askDelete(mid){
 }
 $('cBack').onclick = goHome;
 
+function confirmSheet(title, msg, okLabel, fn){
+  showSheet(`<h3 style="margin:0 0 6px">${title}</h3><div style="opacity:.7">${msg}</div>
+    <div class="acts"><button class="btn ghost" id="cfNo">Cancel</button><button class="btn red" id="cfYes">${okLabel}</button></div>`);
+  $('cfNo').onclick = closeSheet;
+  $('cfYes').onclick = async () => { closeSheet(); await fn(); };
+}
+$('cMenu').onclick = () => {
+  if(!curFriend) return;
+  showSheet(`<h3 style="margin:0 0 12px">Chat options</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn ghost" id="mClear">Clear chat (only for me)</button>
+      <button class="btn red" id="mDelAll">Delete chat for everyone</button>
+      <button class="btn ghost" id="mCancel">Cancel</button>
+    </div>`);
+  $('mCancel').onclick = closeSheet;
+  $('mClear').onclick = () => confirmSheet('Clear chat?', 'Your chat history will be hidden for you. The other person keeps their copy.', 'Clear', async () => {
+    const cid = chatId(me.uid, curFriend.id), now = Date.now();
+    try{
+      await updateDoc(doc(db,'chats',cid), { ['clearedAt.' + me.uid]: now });
+      chats[cid] = { ...(chats[cid] || {}), clearedAt: { ...((chats[cid] || {}).clearedAt || {}), [me.uid]: now } };
+      renderMsgs(lastSnap); toast('Chat cleared');
+    }catch(e){ toast('Could not clear the chat.'); }
+  });
+  $('mDelAll').onclick = () => confirmSheet('Delete chat for everyone?', 'All messages in this chat will be permanently deleted for both of you.', 'Delete all', async () => {
+    const cid = chatId(me.uid, curFriend.id);
+    try{
+      const snap = await getDocs(collection(db,'chats',cid,'messages'));
+      for(let i = 0; i < snap.docs.length; i += 400){
+        const b = writeBatch(db);
+        snap.docs.slice(i, i + 400).forEach(d => b.delete(d.ref));
+        await b.commit();
+      }
+      await updateDoc(doc(db,'chats',cid), { lastText: '', lastTs: 0, unread: {} });
+      toast('Chat deleted');
+    }catch(e){ toast('Could not delete the chat.'); }
+  });
+};
+
 async function sendMsg(){
   const text = $('mIn').value.trim();
   if((!text && !pending) || !curFriend) return;
   const fid = curFriend.id, cid = chatId(me.uid, fid);
   const data = { from: me.uid, ts: Date.now(), seen: false };
+  data.expireAt = Timestamp.fromMillis(data.ts + RETENTION_MS);
   if(text) data.text = text;
   if(pending) data.photo = pending;
   const preview = text || '📷 Photo';
