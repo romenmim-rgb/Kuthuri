@@ -1,69 +1,89 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f6f5c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
 <title>আমাদের কুঠুরি</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#1c2b28;--paper:#f6f2ea;--dim:#ece5d8;--teal:#2f6f5c;--dark:#204d40;--gold:#c99a3f;--brick:#b5533b;--in:#fff;--line:rgba(28,43,40,.12)}
 @media (prefers-color-scheme:dark){:root{--ink:#f0ece2;--paper:#141b19;--dim:#1c2522;--in:#22302c;--line:rgba(240,236,226,.12);--dark:#7fc3ad}}
 *{box-sizing:border-box}html,body{height:100%;margin:0}
-body{background:var(--paper);color:var(--ink);font-family:'Hind Siliguri',sans-serif;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:'Hind Siliguri',system-ui,sans-serif;overflow:hidden}
 .app{height:100%;max-width:480px;margin:0 auto;position:relative}
 .view{position:absolute;inset:0;display:none;flex-direction:column;background:var(--paper)}
 .view.on{display:flex}
-h1,h2{font-family:'Fraunces',serif;color:var(--dark);margin:0}
-.btn{border:0;border-radius:12px;padding:13px 16px;font:600 1rem inherit;font-family:inherit;background:var(--teal);color:#fdfbf6;cursor:pointer}
+h1,h2{font-family:'Fraunces','Hind Siliguri',serif;color:var(--dark);margin:0}
+.btn{border:0;border-radius:12px;padding:13px 16px;font-size:1rem;font-weight:600;font-family:inherit;background:var(--teal);color:#fdfbf6;cursor:pointer}
 .btn.ghost{background:transparent;color:var(--dark);border:1.5px solid var(--line)}
 .btn.sm{padding:8px 12px;font-size:.85rem;border-radius:10px}
-.btn.red{background:var(--brick)}
+.btn.red{background:var(--brick);color:#fff}
+.btn.block{width:100%}
 input,textarea{font-family:inherit;font-size:1rem;color:var(--ink);background:var(--in);border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;outline:0;width:100%}
 input:focus,textarea:focus{border-color:var(--teal)}
 .err{color:var(--brick);font-size:.85rem;min-height:1.2em}
-/* auth */
-.auth{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:28px}
-.auth h1{font-size:2.2rem}.auth p{margin:0 0 10px;opacity:.65}
+.auth{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:28px;overflow-y:auto}
+.auth h1{font-size:2.2rem}.auth p{margin:0 0 8px;opacity:.65}
 .sw{text-align:center;font-size:.9rem}.sw a{color:var(--dark);font-weight:700;cursor:pointer}
-/* top */
-.top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}
-.tabs{display:flex;gap:6px;padding:0 16px 10px}
-.tab{flex:1;text-align:center;padding:8px;border-radius:10px;font-weight:600;font-size:.9rem;opacity:.55;cursor:pointer}
-.tab.on{background:var(--dim);opacity:1;color:var(--dark)}
-.badge{background:var(--brick);color:#fff;border-radius:10px;font-size:.7rem;padding:1px 7px;margin-left:4px}
-.scroll{flex:1;overflow-y:auto;padding:4px 12px 20px}
+.top{display:flex;align-items:center;gap:10px;padding:14px 16px 10px}
+.top h2{flex:1;font-size:1.45rem}
+.top .back{font-size:1.5rem;cursor:pointer;padding:2px 8px 2px 0}
+.tbtns{display:flex;align-items:center;gap:10px}
+.ib{position:relative;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:var(--in);font-size:1.05rem;cursor:pointer;color:var(--ink)}
+.dotbadge{position:absolute;top:-4px;right:-4px;background:var(--brick);color:#fff;border-radius:10px;font-size:.65rem;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 4px}
+.scroll{flex:1;overflow-y:auto;padding:4px 12px 24px}
 .row{display:flex;align-items:center;gap:12px;padding:11px 8px;border-radius:14px}
 .row.tap{cursor:pointer}.row.tap:active{background:var(--dim)}
-.av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0}
-.grow{flex:1;min-width:0}.grow b{display:block}.grow small{opacity:.6}
-.empty{text-align:center;opacity:.5;padding:50px 20px;font-size:.9rem}
-.sec{font-size:.8rem;opacity:.55;margin:14px 8px 4px}
+.av{position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.av .dot{position:absolute;right:0;bottom:0;width:12px;height:12px;background:#2fa56b;border:2px solid var(--paper);border-radius:50%}
+.grow{flex:1;min-width:0}.grow b{display:block}.grow small{opacity:.6;display:block}
+.pre{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}.meta small{font-size:.7rem;opacity:.5}
+.ub{background:var(--teal);color:#fff;border-radius:10px;font-size:.72rem;min-width:20px;height:20px;line-height:20px;text-align:center;padding:0 6px}
+.empty{text-align:center;opacity:.55;padding:50px 20px;font-size:.92rem;line-height:1.5}
+.sec{font-size:.8rem;opacity:.55;margin:16px 8px 6px}
 .search{display:flex;gap:8px;padding:0 8px}
+.f{display:flex;flex-direction:column;gap:6px;margin:0 8px 12px}.f label{font-size:.8rem;opacity:.6}
+.pad{padding:0 8px}
+.swrow{display:flex;align-items:center;justify-content:space-between;margin:6px 8px 14px}
+.swrow input{width:22px;height:22px;accent-color:var(--teal)}
 /* chat */
-.chead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
-.chead .back{font-size:1.4rem;cursor:pointer;padding:4px 6px}
-.ib{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:var(--in);font-size:1.05rem;cursor:pointer}
+.chead{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.chead .back{font-size:1.5rem;cursor:pointer;padding:4px 6px}
+.chead .who{cursor:pointer;display:flex;align-items:center;gap:10px;flex:1;min-width:0}
 .msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
 .b{max-width:78%;padding:9px 13px;border-radius:18px;line-height:1.4;word-wrap:break-word;font-size:.96rem}
-.b.out{align-self:flex-end;background:var(--teal);color:#fdfbf6;border-bottom-right-radius:5px}
+.b.out{align-self:flex-end;background:var(--teal);color:#fdfbf6;border-bottom-right-radius:5px;cursor:pointer}
 .b.in{align-self:flex-start;background:var(--in);border-bottom-left-radius:5px;box-shadow:0 1px 2px rgba(0,0,0,.07)}
-.b img{max-width:220px;width:100%;border-radius:12px;display:block}
-.b small{display:block;font-size:.65rem;opacity:.55;margin-top:3px;text-align:right}
+.b img{max-width:220px;width:100%;border-radius:12px;display:block;margin-bottom:3px}
+.b small{display:block;font-size:.65rem;opacity:.65;margin-top:3px;text-align:right}
+.tk.seen{color:#7fe3ff;opacity:1}
 .comp{display:flex;align-items:flex-end;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
 .comp textarea{border-radius:20px;resize:none;max-height:100px;padding:10px 15px}
 .pv{display:none;align-items:center;gap:10px;padding:8px 14px;background:var(--dim);font-size:.75rem}
 .pv img{width:44px;height:44px;object-fit:cover;border-radius:8px}
+/* sheet + toast */
+#sheetBg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:60}
+#sheetBg.on{display:flex}
+#sheet{background:var(--paper);width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto}
+#sheet .acts{display:flex;gap:10px;margin-top:16px}#sheet .acts .btn{flex:1}
+.pcard{text-align:center}.pcard .av{margin:0 auto 12px}.pcard h2{font-size:1.4rem}.pcard small{opacity:.65;display:block;margin-top:4px}
+#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-140px);background:#1c2b28;color:#fff;padding:11px 16px;border-radius:14px;max-width:88%;font-size:.9rem;z-index:100;transition:transform .25s;box-shadow:0 6px 20px rgba(0,0,0,.3);cursor:pointer}
+#toast.on{transform:translate(-50%,0)}
 /* call */
 #call{background:#0f1614;color:#fff;z-index:30}
 #remoteV{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0f1614;border-radius:0;border:0;padding:0}
 #localV{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;width:96px;height:136px;object-fit:cover;border-radius:14px;border:2px solid rgba(255,255,255,.4);padding:0;background:#222}
 .cinfo{position:absolute;top:18%;left:0;right:0;text-align:center;text-shadow:0 1px 8px rgba(0,0,0,.6)}
-.cinfo .av{width:90px;height:90px;font-size:2rem;margin:0 auto 12px}
-.cinfo h2{color:#fff;font-size:1.6rem}
+.cinfo .av{margin:0 auto 12px}.cinfo h2{color:#fff;font-size:1.6rem}
 .cbar{position:absolute;bottom:calc(36px + env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:center;gap:22px}
 .cb{width:62px;height:62px;border-radius:50%;border:0;font-size:1.5rem;cursor:pointer;background:rgba(255,255,255,.2);color:#fff}
 .cb.end{background:#d64545}.cb.ok{background:#2fa56b}.cb.off{background:#fff;color:#000}
-#incoming{z-index:40;background:rgba(15,22,20,.96);color:#fff;align-items:center;justify-content:center;gap:10px}
+#incoming{z-index:40;background:rgba(15,22,20,.97);color:#fff;align-items:center;justify-content:center;gap:10px}
 #incoming h2{color:#fff}
 </style>
 </head>
@@ -73,51 +93,103 @@ input:focus,textarea:focus{border-color:var(--teal)}
 <!-- AUTH -->
 <div class="view on" id="vAuth">
   <div class="auth">
-    <h1>আমাদের কুঠুরি</h1><p>পরিবারের সবার জন্য চ্যাট ও কল।</p>
-    <input id="aUser" placeholder="username (a-z, 0-9, _)" autocapitalize="off" autocomplete="off">
-    <input id="aName" placeholder="আপনার নাম (যেমন: রহিম ভাই)" style="display:none">
-    <input id="aPin" type="password" inputmode="numeric" maxlength="6" placeholder="৬ সংখ্যার PIN">
+    <h1>আমাদের কুঠুরি</h1><p>Private chat and calls for the family.</p>
+    <input id="aUser" placeholder="Username (a-z, 0-9, _)" autocapitalize="off" autocomplete="off" autocorrect="off">
+    <input id="aName" placeholder="Your name (e.g. Rahim Bhai)" style="display:none" autocomplete="off">
+    <input id="aCode" placeholder="Family code (ask the admin)" style="display:none" autocomplete="off" autocapitalize="off">
+    <input id="aPin" type="password" inputmode="numeric" maxlength="6" placeholder="6-digit PIN" autocomplete="new-password">
     <div class="err" id="aErr"></div>
-    <button class="btn" id="aGo">প্রবেশ করুন</button>
-    <div class="sw"><span id="aSwTxt">নতুন?</span> <a id="aSw">অ্যাকাউন্ট তৈরি করুন</a></div>
+    <button class="btn" id="aGo">Log in</button>
+    <div class="sw"><span id="aSwTxt">New here?</span> <a id="aSw">Create account</a></div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="view" id="vMain">
-  <div class="top"><h2>আমাদের কুঠুরি</h2><button class="btn ghost sm" id="logout">লগ আউট</button></div>
-  <div class="tabs">
-    <div class="tab on" data-t="friends">চ্যাট</div>
-    <div class="tab" id="tabAdmin" data-t="admin" style="display:none">অ্যাডমিন</div>
-    <div class="tab" data-t="reqs">বন্ধু যোগ <span class="badge" id="reqBadge" style="display:none"></span></div>
+<!-- HOME: chats only -->
+<div class="view" id="vHome">
+  <div class="top">
+    <h2>আমাদের কুঠুরি</h2>
+    <div class="tbtns">
+      <button class="ib" id="btnAdd" title="Add friends">👤<span class="dotbadge" id="reqBadge" style="display:none"></span></button>
+      <div id="btnMe" style="cursor:pointer"></div>
+    </div>
   </div>
-  <div class="scroll" id="tFriends"></div>
-  <div class="scroll" id="tAdmin" style="display:none"></div>
-  <div class="scroll" id="tReqs" style="display:none">
-    <div class="sec">Username দিয়ে খুঁজুন</div>
-    <div class="search"><input id="sQ" placeholder="exact username" autocapitalize="off"><button class="btn" id="sGo">খুঁজুন</button></div>
+  <div class="scroll" id="chatList"></div>
+</div>
+
+<!-- ADD FRIENDS -->
+<div class="view" id="vAdd">
+  <div class="top"><span class="back" data-home>←</span><h2>Add friends</h2></div>
+  <div class="scroll">
+    <div class="sec">Find by exact username</div>
+    <div class="search"><input id="sQ" placeholder="username" autocapitalize="off" autocomplete="off"><button class="btn" id="sGo">Search</button></div>
     <div id="sRes"></div>
-    <div class="sec">আসা রিকোয়েস্ট</div>
+    <div class="sec">Friend requests</div>
     <div id="reqList"></div>
-    <div class="sec" style="margin-top:20px">আপনার username: <b id="myUname"></b></div>
+    <div class="sec">Invite family</div>
+    <div class="pad"><button class="btn ghost block" id="inviteBtn">Share app link (WhatsApp, Messenger…)</button></div>
+    <div class="sec">Your username: <b id="myUname"></b></div>
+  </div>
+</div>
+
+<!-- MY PROFILE -->
+<div class="view" id="vMe">
+  <div class="top"><span class="back" data-home>←</span><h2>My profile</h2></div>
+  <div class="scroll">
+    <div class="pcard" style="margin:8px 0 16px">
+      <div id="pAv"></div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="btn ghost sm" id="pPick">Change photo</button>
+        <button class="btn ghost sm" id="pRemove">Remove</button>
+      </div>
+      <input type="file" id="pFile" accept="image/*" style="display:none">
+      <small>@<span id="pUser"></span></small>
+    </div>
+    <div class="f"><label>Name</label><input id="pName" maxlength="30"></div>
+    <div class="f"><label>About</label><input id="pAbout" maxlength="80" placeholder="Hey there! I am using Amader Kuthuri"></div>
+    <div class="swrow"><span>Show my online status</span><input type="checkbox" id="pOnline"></div>
+    <div class="pad"><button class="btn block" id="pSave">Save profile</button></div>
+
+    <div class="sec">Notifications</div>
+    <div class="pad"><button class="btn ghost block" id="notifBtn">Enable notifications</button>
+      <small id="notifNote" style="display:block;opacity:.6;margin-top:6px"></small>
+      <button class="btn ghost block" id="installBtn" style="display:none;margin-top:8px">Install app on this phone</button></div>
+
+    <div class="sec">Change PIN</div>
+    <div class="f"><label>Current PIN</label><input id="pCur" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"></div>
+    <div class="f"><label>New PIN (6 digits)</label><input id="pNew" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password"></div>
+    <div class="pad"><button class="btn ghost block" id="pinGo">Update PIN</button></div>
+
+    <div class="pad" style="margin-top:22px;display:flex;flex-direction:column;gap:10px">
+      <button class="btn block" id="adminBtn" style="display:none">Admin panel</button>
+      <button class="btn red block" id="logout">Log out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="view" id="vAdmin">
+  <div class="top"><span class="back" data-home>←</span><h2>Admin</h2></div>
+  <div class="scroll">
+    <div class="sec">Family code (needed to create an account)</div>
+    <div class="search"><input id="invCode" placeholder="Set a family code" autocapitalize="off"><button class="btn" id="invSave">Save</button></div>
+    <div id="adminList"></div>
   </div>
 </div>
 
 <!-- CHAT -->
 <div class="view" id="vChat">
   <div class="chead">
-    <div class="back" id="cBack">←</div>
-    <div class="av" id="cAv" style="width:38px;height:38px;font-size:.9rem"></div>
-    <div class="grow"><b id="cName"></b></div>
+    <span class="back" id="cBack">←</span>
+    <div class="who" id="cWho"><div id="cAv"></div><div class="grow"><b id="cName"></b><small id="cSub"></small></div></div>
     <button class="ib" id="cVoice">📞</button>
     <button class="ib" id="cVideo">🎥</button>
   </div>
   <div class="msgs" id="msgs"></div>
-  <div class="pv" id="pv"><img id="pvImg"><span id="pvNote"></span><span style="margin-left:auto;cursor:pointer" id="pvX">✕</span></div>
+  <div class="pv" id="pv"><img id="pvImg"><span id="pvNote"></span><span style="margin-left:auto;cursor:pointer;padding:6px" id="pvX">✕</span></div>
   <div class="comp">
     <button class="ib" id="attach">📎</button>
     <input type="file" id="file" accept="image/*" style="display:none">
-    <textarea id="mIn" rows="1" placeholder="মেসেজ লিখুন..."></textarea>
+    <textarea id="mIn" rows="1" placeholder="Type a message"></textarea>
     <button class="ib" id="send" style="background:var(--teal);color:#fff;border:0">➤</button>
   </div>
 </div>
@@ -126,7 +198,7 @@ input:focus,textarea:focus{border-color:var(--teal)}
 <div class="view" id="call">
   <video id="remoteV" autoplay playsinline></video>
   <video id="localV" autoplay playsinline muted></video>
-  <div class="cinfo"><div class="av" id="callAv"></div><h2 id="callName"></h2><div id="callStat"></div></div>
+  <div class="cinfo"><div id="callAv"></div><h2 id="callName"></h2><div id="callStat"></div></div>
   <div class="cbar">
     <button class="cb" id="muteB">🎤</button>
     <button class="cb end" id="endB">✕</button>
@@ -136,7 +208,7 @@ input:focus,textarea:focus{border-color:var(--teal)}
 
 <!-- INCOMING -->
 <div class="view" id="incoming">
-  <div class="av" id="inAv" style="width:96px;height:96px;font-size:2.2rem"></div>
+  <div id="inAv"></div>
   <h2 id="inName"></h2><div id="inType" style="opacity:.7"></div>
   <div class="cbar" style="position:static;margin-top:40px">
     <button class="cb end" id="decB">✕</button>
@@ -145,13 +217,15 @@ input:focus,textarea:focus{border-color:var(--teal)}
 </div>
 
 </div>
+<div id="sheetBg"><div id="sheet"></div></div>
+<div id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, addDoc, query, where, orderBy, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, addDoc, query, where, orderBy, onSnapshot, writeBatch, increment, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* ====== ১. এখানে আপনার Firebase config বসান (README দেখুন) ====== */
+/* ====== Firebase config ====== */
 const firebaseConfig = {
   apiKey: "AIzaSyAVDkA1pCiZVy3ef_RZ6srsDqyNRXeGE30",
   authDomain: "amader-kuthuri.firebaseapp.com",
@@ -160,11 +234,14 @@ const firebaseConfig = {
   messagingSenderId: "654868196488",
   appId: "1:654868196488:web:2f35754a863885cf17433d"
 };
-/* ====== ২. দুই জন আলাদা নেটওয়ার্কে থাকলে TURN লাগতে পারে (README দেখুন) ====== */
+/* Optional: Web Push key (Firebase Console > Project settings > Cloud Messaging > Web Push certificates). Needed only for background push. */
+const VAPID_KEY = "";
+/* Optional TURN server for calls across different networks */
 const ICE = { iceServers: [
   { urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }
   // { urls: "turn:YOUR_TURN_HOST:80", username: "USER", credential: "PASS" }
 ]};
+const ADMIN_USERNAME = 'romen';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -172,39 +249,129 @@ const db = getFirestore(app);
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const COLORS = ['#2f6f5c','#b5533b','#c99a3f','#5a6fb0','#8a5aa8','#3d8fa0'];
-const color = n => COLORS[[...n].reduce((h,c)=>(h*31+c.charCodeAt(0))%6,0)];
-const ini = n => (n||'?').trim().slice(0,1);
-function view(id){ document.querySelectorAll('.view').forEach(v=>{ if(!['call','incoming'].includes(v.id)) v.classList.remove('on'); }); $(id).classList.add('on'); }
+const color = n => COLORS[[...String(n||'?')].reduce((h,c)=>(h*31+c.charCodeAt(0))%6,0)];
+const ini = n => String(n||'?').trim().slice(0,1).toUpperCase();
+const emailOf = u => `${u}@ghoroa.app`;
+const chatId = (a,b) => [a,b].sort().join('_');
 
-const ADMIN_USERNAME = 'romen';
-let me = null, friends = {}, unsubs = [], registering = false, curFriend = null, chatUnsub = null, pending = null;
+/* ---------- state ---------- */
+let me = null, friends = {}, profiles = {}, chats = {}, requestsIn = [];
+let unsubs = [], profUnsubs = {}, chatUnsub = null, curFriend = null, lastSnap = null;
+let registering = false, pending = null, newPhoto, chatsLoaded = false;
+
+/* ---------- UI helpers ---------- */
+let toastT = null;
+function toast(msg, onTap){
+  const t = $('toast'); t.textContent = msg; t.classList.add('on');
+  t.onclick = () => { t.classList.remove('on'); onTap && onTap(); };
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 4200);
+}
+function showSheet(html){ $('sheet').innerHTML = html; $('sheetBg').classList.add('on'); }
+function closeSheet(){ $('sheetBg').classList.remove('on'); }
+$('sheetBg').addEventListener('click', e => { if(e.target === $('sheetBg')) closeSheet(); });
+
+function viewRaw(id){
+  document.querySelectorAll('.view').forEach(v => { if(!['call','incoming'].includes(v.id)) v.classList.remove('on'); });
+  $(id).classList.add('on');
+}
+function view(id){ viewRaw(id); if(id !== 'vHome' && id !== 'vAuth') history.pushState({v:id}, ''); }
+history.replaceState({v:'vHome'}, '');
+function showHome(){
+  if(chatUnsub){ chatUnsub(); chatUnsub = null; }
+  curFriend = null; lastSnap = null; closeSheet();
+  viewRaw('vHome'); renderHome();
+}
+function goHome(){ if(history.state && history.state.v && history.state.v !== 'vHome') history.back(); else showHome(); }
+window.addEventListener('popstate', () => { if(me && !callState) showHome(); });
+document.querySelectorAll('[data-home]').forEach(b => b.onclick = goHome);
+
+function prof(id){ return { ...(friends[id]||{}), ...(profiles[id]||{}) }; }
+function isOnline(p){ return !!p && p.showOnline !== false && p.online === true && Date.now() - (p.lastSeen||0) < 100000; }
+function ago(t){
+  const m = Math.floor((Date.now()-t)/60000);
+  if(m < 1) return 'just now'; if(m < 60) return m + ' min ago';
+  const h = Math.floor(m/60); if(h < 24) return h + ' h ago';
+  return new Date(t).toLocaleDateString();
+}
+function statusOf(p){
+  if(!p || p.showOnline === false) return '';
+  if(isOnline(p)) return 'online';
+  return p.lastSeen ? 'last seen ' + ago(p.lastSeen) : '';
+}
+function timeShort(t){
+  const d = new Date(t), n = new Date();
+  return d.toDateString() === n.toDateString()
+    ? d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+    : d.toLocaleDateString([], {day:'numeric', month:'short'});
+}
+function avatar(p, size = 46){
+  const name = p.displayName || '?';
+  const dot = isOnline(p) ? '<i class="dot"></i>' : '';
+  const inner = p.photo ? `<img src="${p.photo}">` : esc(ini(name));
+  return `<div class="av" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.42)}px;background:${color(name)}">${inner}${dot}</div>`;
+}
+
+/* ---------- image helper ---------- */
+function loadImage(file){
+  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); });
+}
+async function compressPhoto(file){
+  const img = await loadImage(file);
+  let maxW = 900, q = .7, out;
+  do{
+    const sc = Math.min(1, maxW / img.width), c = document.createElement('canvas');
+    c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    out = c.toDataURL('image/jpeg', q); maxW *= .8; q -= .08;
+  } while(out.length > 700000 && maxW > 200);
+  return out;
+}
+async function squarePhoto(file, size = 160){
+  const img = await loadImage(file);
+  const s = Math.min(img.width, img.height), c = document.createElement('canvas');
+  c.width = c.height = size;
+  c.getContext('2d').drawImage(img, (img.width-s)/2, (img.height-s)/2, s, s, 0, 0, size, size);
+  return c.toDataURL('image/jpeg', .75);
+}
 
 /* ================= AUTH ================= */
 let reg = false;
-$('aSw').onclick = () => {
-  reg = !reg;
-  $('aName').style.display = reg ? '' : 'none';
-  $('aGo').textContent = reg ? 'অ্যাকাউন্ট তৈরি করুন' : 'প্রবেশ করুন';
-  $('aSw').textContent = reg ? 'লগ ইন করুন' : 'অ্যাকাউন্ট তৈরি করুন';
-  $('aSwTxt').textContent = reg ? 'আগে থেকে আছে?' : 'নতুন?';
+function setRegMode(on){
+  reg = on;
+  $('aName').style.display = $('aCode').style.display = reg ? '' : 'none';
+  $('aGo').textContent = reg ? 'Create account' : 'Log in';
+  $('aSw').textContent = reg ? 'Log in' : 'Create account';
+  $('aSwTxt').textContent = reg ? 'Already have an account?' : 'New here?';
   $('aErr').textContent = '';
-};
-const emailOf = u => `${u}@ghoroa.app`;
+}
+$('aSw').onclick = () => setRegMode(!reg);
+function clearAuthFields(){ ['aUser','aName','aCode','aPin'].forEach(i => $(i).value = ''); $('aErr').textContent = ''; }
 
 $('aGo').onclick = async () => {
-  const u = $('aUser').value.trim().toLowerCase(), pin = $('aPin').value.trim(), name = $('aName').value.trim();
+  const u = $('aUser').value.trim().toLowerCase(), pin = $('aPin').value.trim(), name = $('aName').value.trim(), code = $('aCode').value.trim();
   const err = $('aErr'); err.textContent = '';
-  if(!/^[a-z0-9_]{3,20}$/.test(u)) return err.textContent = 'Username: ৩-২০ অক্ষর, শুধু a-z, 0-9, _';
-  if(!/^\d{6}$/.test(pin)) return err.textContent = 'PIN অবশ্যই ৬ সংখ্যার হতে হবে।';
+  if(!/^[a-z0-9_]{3,20}$/.test(u)) return err.textContent = 'Username: 3-20 characters, only a-z, 0-9 and _';
+  if(!/^\d{6}$/.test(pin)) return err.textContent = 'PIN must be exactly 6 digits.';
   $('aGo').disabled = true;
   try{
     if(reg){
-      if(!name) throw {code:'x', message:'আপনার নাম দিন।'};
-      if((await getDoc(doc(db,'usernames',u))).exists()) throw {code:'x', message:'এই username আগে থেকেই আছে।'};
+      if(!name) throw {message:'Please enter your name.'};
+      if((await getDoc(doc(db,'usernames',u))).exists()) throw {message:'This username is already taken.'};
       registering = true;
-      const cred = await createUserWithEmailAndPassword(auth, emailOf(u), pin);
-      await setDoc(doc(db,'usernames',u), { uid: cred.user.uid });
-      await setDoc(doc(db,'users',cred.user.uid), { username: u, displayName: name });
+      let cred;
+      try{ cred = await createUserWithEmailAndPassword(auth, emailOf(u), pin); }
+      catch(e){ registering = false; throw e; }
+      try{
+        const b = writeBatch(db);
+        b.set(doc(db,'users',cred.user.uid), { username:u, displayName:name, about:'', showOnline:true, online:true, lastSeen:Date.now(), inviteCode:code });
+        b.set(doc(db,'usernames',u), { uid: cred.user.uid });
+        await b.commit();
+      }catch(e){
+        await cred.user.delete().catch(()=>{});
+        registering = false;
+        throw {message:'Could not create the account. Check the family code (ask the admin).'};
+      }
+      await updateDoc(doc(db,'users',cred.user.uid), { inviteCode: deleteField() }).catch(()=>{});
       registering = false;
       await boot(cred.user);
     } else {
@@ -212,74 +379,278 @@ $('aGo').onclick = async () => {
     }
   }catch(e){
     registering = false;
-    const map = {'auth/invalid-credential':'Username বা PIN ভুল।','auth/user-not-found':'এই username এ অ্যাকাউন্ট নেই।','auth/wrong-password':'ভুল PIN।','auth/email-already-in-use':'এই username আগে থেকেই আছে।','auth/too-many-requests':'অনেকবার চেষ্টা হয়েছে, একটু পরে আবার করুন।'};
-    err.textContent = map[e.code] || e.message || 'কিছু একটা ভুল হয়েছে।';
+    const map = {'auth/invalid-credential':'Wrong username or PIN.','auth/user-not-found':'No account with this username.','auth/wrong-password':'Wrong PIN.','auth/email-already-in-use':'This username is already taken.','auth/too-many-requests':'Too many attempts. Try again later.','auth/network-request-failed':'No internet connection.'};
+    err.textContent = map[e.code] || e.message || 'Something went wrong.';
   }
   $('aGo').disabled = false;
 };
 
 onAuthStateChanged(auth, async user => {
   if(user && !registering) await boot(user);
-  if(!user){ cleanupAll(); view('vAuth'); }
+  if(!user){ cleanupAll(); viewRaw('vAuth'); }
 });
-$('logout').onclick = () => signOut(auth);
+
+$('logout').onclick = async () => {
+  setPresence(false);
+  await new Promise(r => setTimeout(r, 250));
+  await signOut(auth);
+  setRegMode(false);
+  clearAuthFields();
+};
 
 async function boot(user){
-  const snap = await getDoc(doc(db,'users',user.uid));
-  if(!snap.exists()) return;
+  let snap;
+  try{ snap = await getDoc(doc(db,'users',user.uid)); }catch(e){ snap = null; }
+  if(!snap || !snap.exists()){ await signOut(auth); $('aErr').textContent = 'This account has no profile. Please create a new account.'; return; }
   me = { uid: user.uid, ...snap.data() };
-  $('myUname').textContent = me.username;
-  $('tabAdmin').style.display = me.username === ADMIN_USERNAME ? '' : 'none';
-  view('vMain');
+  clearAuthFields();
+  $('myUname').textContent = '@' + me.username;
+  $('adminBtn').style.display = me.username === ADMIN_USERNAME ? '' : 'none';
+  renderMeAvatar();
   startListeners();
+  setPresence(true);
+  showHome();
+  history.replaceState({v:'vHome'}, '');
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
-function cleanupAll(){ unsubs.forEach(f=>f()); unsubs=[]; if(chatUnsub) chatUnsub(); me=null; friends={}; }
+function cleanupAll(){
+  unsubs.forEach(f => f()); unsubs = [];
+  Object.values(profUnsubs).forEach(f => f()); profUnsubs = {};
+  if(chatUnsub){ chatUnsub(); chatUnsub = null; }
+  me = null; friends = {}; profiles = {}; chats = {}; requestsIn = []; curFriend = null; chatsLoaded = false;
+}
+function renderMeAvatar(){ $('btnMe').innerHTML = avatar(me, 40); }
+
+/* ================= PRESENCE ================= */
+function setPresence(on){
+  if(!me) return;
+  updateDoc(doc(db,'users',me.uid), { online: on, lastSeen: Date.now() }).catch(()=>{});
+}
+setInterval(() => { if(me && !document.hidden) setPresence(true); }, 40000);
+setInterval(() => { if(me && $('vHome').classList.contains('on')) renderHome(); if(curFriend) updateChatHeader(); }, 30000);
+document.addEventListener('visibilitychange', () => {
+  if(!me) return;
+  setPresence(!document.hidden);
+  if(!document.hidden && lastSnap) markSeen(lastSnap);
+});
+window.addEventListener('pagehide', () => setPresence(false));
 
 /* ================= LISTENERS ================= */
 function startListeners(){
-  unsubs.forEach(f=>f()); unsubs=[];
+  unsubs.forEach(f => f()); unsubs = [];
   unsubs.push(onSnapshot(collection(db,'users',me.uid,'friends'), s => {
     friends = {}; s.forEach(d => friends[d.id] = d.data());
-    renderFriends();
+    syncProfiles(); renderHome();
   }));
   unsubs.push(onSnapshot(query(collection(db,'requests'), where('to','==',me.uid)), s => {
-    const list = s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.status==='pending');
-    renderReqs(list);
+    requestsIn = s.docs.map(d => ({ id:d.id, ...d.data() })).filter(r => r.status === 'pending');
+    renderReqs();
+  }));
+  chatsLoaded = false;
+  unsubs.push(onSnapshot(query(collection(db,'chats'), where('members','array-contains',me.uid)), s => {
+    s.docChanges().forEach(ch => {
+      if(!chatsLoaded || ch.type === 'removed') return;
+      const c = ch.doc.data();
+      if(!c.lastTs || c.lastFrom === me.uid) return;
+      if(Date.now() - c.lastTs > 60000) return;
+      const fid = c.members.find(x => x !== me.uid);
+      const viewing = curFriend && curFriend.id === fid && !document.hidden;
+      if(!viewing) notify(prof(fid).displayName || 'New message', c.lastText || 'New message', () => friends[fid] && openChat(fid));
+    });
+    chats = {}; s.forEach(d => chats[d.id] = d.data());
+    chatsLoaded = true;
+    renderHome();
   }));
   unsubs.push(onSnapshot(query(collection(db,'calls'), where('callee','==',me.uid), where('status','==','ringing')), s => {
     s.docChanges().forEach(ch => {
       if(ch.type !== 'added') return;
       const c = ch.doc.data();
-      if(Date.now() - (c.created||0) > 45000) return;      // পুরনো call বাদ
-      if(callState) return;                                 // আগে থেকেই call এ
+      if(Date.now() - (c.created||0) > 45000) return;
+      if(callState) return;
       showIncoming(ch.doc.id, c);
     });
   }));
 }
-
-/* ================= TABS / FRIENDS ================= */
-document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x===t));
-  $('tFriends').style.display = t.dataset.t==='friends' ? '' : 'none';
-  $('tReqs').style.display = t.dataset.t==='reqs' ? '' : 'none';
-  $('tAdmin').style.display = t.dataset.t==='admin' ? '' : 'none';
-  if(t.dataset.t==='admin') loadAdmin();
-});
-
-function renderFriends(){
-  const ids = Object.keys(friends);
-  $('tFriends').innerHTML = ids.length ? ids.map(id => `
-    <div class="row tap" data-id="${id}">
-      <div class="av" style="background:${color(friends[id].displayName)}">${esc(ini(friends[id].displayName))}</div>
-      <div class="grow"><b>${esc(friends[id].displayName)}</b><small>@${esc(friends[id].username)}</small></div>
-    </div>`).join('') : `<div class="empty">এখনো কোনো বন্ধু নেই।<br>"বন্ধু যোগ" ট্যাবে username দিয়ে খুঁজুন।</div>`;
-  $('tFriends').querySelectorAll('.row').forEach(r => r.onclick = () => openChat(r.dataset.id));
+function syncProfiles(){
+  Object.keys(friends).forEach(fid => {
+    if(profUnsubs[fid]) return;
+    profUnsubs[fid] = onSnapshot(doc(db,'users',fid), s => {
+      if(!s.exists()) return;
+      profiles[fid] = s.data(); renderHome();
+      if(curFriend && curFriend.id === fid) updateChatHeader();
+    });
+  });
+  Object.keys(profUnsubs).forEach(fid => { if(!friends[fid]){ profUnsubs[fid](); delete profUnsubs[fid]; delete profiles[fid]; } });
 }
 
-/* ================= ADMIN (শুধু romen) ================= */
+/* ================= NOTIFICATIONS (while app is open) ================= */
+function beep(){
+  try{
+    const ctx = beep.ctx || (beep.ctx = new (window.AudioContext||window.webkitAudioContext)());
+    if(ctx.state === 'suspended') ctx.resume();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.value = 660; g.gain.value = .12; o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + .18);
+  }catch(e){}
+}
+function notify(title, body, onTap){
+  beep(); navigator.vibrate && navigator.vibrate(120);
+  if(document.hidden && 'Notification' in window && Notification.permission === 'granted'){
+    try{ const n = new Notification(title, { body, icon:'icon-192.png' }); n.onclick = () => { window.focus(); onTap && onTap(); n.close(); }; }catch(e){}
+  } else if(!document.hidden){ toast(title + ': ' + body, onTap); }
+}
+async function setupPush(){
+  if(!VAPID_KEY || !('serviceWorker' in navigator) || !('Notification' in window)) return;
+  try{
+    const { getMessaging, getToken } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js");
+    const reg = await navigator.serviceWorker.register('sw.js');
+    const token = await getToken(getMessaging(app), { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+    if(token) await setDoc(doc(db,'users',me.uid,'tokens',token), { ts: Date.now() });
+  }catch(e){ console.error(e); }
+}
+function updateNotifNote(){
+  const n = $('notifNote');
+  if(!('Notification' in window)) n.textContent = 'This app/browser does not support notifications. Open the link in Chrome, or install it from Chrome.';
+  else if(Notification.permission === 'granted') n.textContent = 'Notifications are on while the app is open' + (VAPID_KEY ? ' and in the background.' : '.');
+  else if(Notification.permission === 'denied') n.textContent = 'Notifications are blocked in your phone settings for this site/app.';
+  else n.textContent = '';
+}
+$('notifBtn').onclick = async () => {
+  if(!('Notification' in window)) return updateNotifNote();
+  const p = await Notification.requestPermission();
+  updateNotifNote();
+  if(p === 'granted'){ toast('Notifications enabled'); setupPush(); }
+};
+let deferredInstall = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; $('installBtn').style.display = ''; });
+$('installBtn').onclick = async () => { if(deferredInstall){ deferredInstall.prompt(); deferredInstall = null; $('installBtn').style.display = 'none'; } };
+
+/* ================= HOME (chat list only) ================= */
+function renderHome(){
+  if(!me) return;
+  const ids = Object.keys(friends);
+  const c = id => chats[chatId(me.uid, id)] || {};
+  ids.sort((a,b) => (c(b).lastTs||0) - (c(a).lastTs||0) || String(prof(a).displayName).localeCompare(String(prof(b).displayName)));
+  $('chatList').innerHTML = ids.length ? ids.map(id => {
+    const p = prof(id), ch = c(id), un = (ch.unread && ch.unread[me.uid]) || 0;
+    const pre = ch.lastText ? (ch.lastFrom === me.uid ? 'You: ' : '') + ch.lastText : (statusOf(p) || 'Say hi 👋');
+    return `<div class="row tap" data-id="${id}">${avatar(p)}
+      <div class="grow"><b>${esc(p.displayName)}</b><small class="pre">${esc(pre)}</small></div>
+      <div class="meta">${ch.lastTs ? `<small>${timeShort(ch.lastTs)}</small>` : ''}${un ? `<span class="ub">${un}</span>` : ''}</div></div>`;
+  }).join('') : `<div class="empty">No chats yet.<br>Tap 👤 at the top to add family members.</div>`;
+  $('chatList').querySelectorAll('.row').forEach(r => r.onclick = () => openChat(r.dataset.id));
+}
+$('btnAdd').onclick = () => { $('sRes').innerHTML = ''; renderReqs(); view('vAdd'); };
+$('btnMe').onclick = openMe;
+
+/* ================= ADD FRIENDS ================= */
+$('sGo').onclick = async () => {
+  const q = $('sQ').value.trim().toLowerCase(), box = $('sRes');
+  if(!q) return;
+  box.innerHTML = '<div class="empty">Searching…</div>';
+  try{
+    const u = await getDoc(doc(db,'usernames',q));
+    if(!u.exists()) return box.innerHTML = '<div class="empty">No user with this username.</div>';
+    const uid = u.data().uid;
+    if(uid === me.uid) return box.innerHTML = '<div class="empty">That is your own username.</div>';
+    const p = (await getDoc(doc(db,'users',uid))).data();
+    const already = !!friends[uid];
+    box.innerHTML = `<div class="row">${avatar(p)}
+      <div class="grow"><b>${esc(p.displayName)}</b><small>@${esc(p.username)}</small></div>
+      ${already ? '<small>Friends ✓</small>' : '<button class="btn sm" id="reqBtn">Add</button>'}</div>`;
+    if(!already) $('reqBtn').onclick = async () => {
+      try{
+        await setDoc(doc(db,'requests',`${me.uid}_${uid}`), { from: me.uid, to: uid, fromName: me.displayName, fromUsername: me.username, status: 'pending' });
+        $('reqBtn').outerHTML = '<small>Request sent ✓</small>';
+      }catch(e){ $('reqBtn').outerHTML = '<small>Already requested</small>'; }
+    };
+  }catch(e){ box.innerHTML = '<div class="empty">Search failed. Try again.</div>'; }
+};
+function renderReqs(){
+  $('reqBadge').style.display = requestsIn.length ? '' : 'none';
+  $('reqBadge').textContent = requestsIn.length;
+  $('reqList').innerHTML = requestsIn.length ? requestsIn.map(r => `
+    <div class="row">${avatar({displayName:r.fromName})}
+      <div class="grow"><b>${esc(r.fromName)}</b><small>@${esc(r.fromUsername)}</small></div>
+      <button class="btn sm" data-a="${r.id}">Accept</button>
+      <button class="btn sm ghost" data-r="${r.id}">✕</button>
+    </div>`).join('') : '<div class="empty" style="padding:18px">No pending requests.</div>';
+  $('reqList').querySelectorAll('[data-a]').forEach(b => b.onclick = () => accept(requestsIn.find(r => r.id === b.dataset.a)));
+  $('reqList').querySelectorAll('[data-r]').forEach(b => b.onclick = () => deleteDoc(doc(db,'requests',b.dataset.r)));
+}
+async function accept(r){
+  try{
+    const batch = writeBatch(db);
+    batch.update(doc(db,'requests',r.id), { status: 'accepted' });
+    batch.set(doc(db,'users',me.uid,'friends',r.from), { username: r.fromUsername, displayName: r.fromName });
+    batch.set(doc(db,'users',r.from,'friends',me.uid), { username: me.username, displayName: me.displayName });
+    await batch.commit();
+    await deleteDoc(doc(db,'requests',r.id)).catch(()=>{});
+    toast('You are now friends with ' + r.fromName);
+  }catch(e){ toast('Could not accept. Try again.'); }
+}
+$('inviteBtn').onclick = async () => {
+  const url = location.href.split('#')[0].split('?')[0].replace(/index\.html$/, '');
+  const text = `Join our family chat "আমাদের কুঠুরি": ${url}\nAsk me for the family code.`;
+  if(navigator.share){ navigator.share({ title: 'আমাদের কুঠুরি', text }).catch(()=>{}); }
+  else window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+};
+
+/* ================= MY PROFILE ================= */
+function openMe(){
+  newPhoto = undefined;
+  $('pAv').innerHTML = avatar(me, 96);
+  $('pUser').textContent = me.username;
+  $('pName').value = me.displayName || '';
+  $('pAbout').value = me.about || '';
+  $('pOnline').checked = me.showOnline !== false;
+  updateNotifNote();
+  view('vMe');
+}
+$('pPick').onclick = () => $('pFile').click();
+$('pFile').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  try{ newPhoto = await squarePhoto(f); $('pAv').innerHTML = avatar({ ...me, photo: newPhoto }, 96); }
+  catch(err){ toast('Could not read that image.'); }
+};
+$('pRemove').onclick = () => { newPhoto = null; $('pAv').innerHTML = avatar({ ...me, photo: null }, 96); };
+$('pSave').onclick = async () => {
+  const name = $('pName').value.trim();
+  if(!name) return toast('Name cannot be empty.');
+  const data = { displayName: name.slice(0,30), about: $('pAbout').value.trim().slice(0,80), showOnline: $('pOnline').checked };
+  if(newPhoto === null) data.photo = deleteField(); else if(newPhoto) data.photo = newPhoto;
+  try{
+    await updateDoc(doc(db,'users',me.uid), data);
+    me.displayName = data.displayName; me.about = data.about; me.showOnline = data.showOnline;
+    if(newPhoto === null) delete me.photo; else if(newPhoto) me.photo = newPhoto;
+    newPhoto = undefined; renderMeAvatar(); toast('Profile saved');
+  }catch(e){ toast('Could not save profile.'); }
+};
+$('pinGo').onclick = async () => {
+  const cur = $('pCur').value, nw = $('pNew').value;
+  if(!/^\d{6}$/.test(cur) || !/^\d{6}$/.test(nw)) return toast('PINs must be 6 digits.');
+  try{
+    const u = auth.currentUser;
+    await reauthenticateWithCredential(u, EmailAuthProvider.credential(emailOf(me.username), cur));
+    await updatePassword(u, nw);
+    $('pCur').value = ''; $('pNew').value = ''; toast('PIN updated');
+  }catch(e){ toast('Current PIN is wrong.'); }
+};
+
+/* ================= ADMIN ================= */
+$('adminBtn').onclick = async () => {
+  view('vAdmin');
+  try{ const s = await getDoc(doc(db,'config','invite')); $('invCode').value = s.exists() ? s.data().code : ''; }catch(e){}
+  loadAdmin();
+};
+$('invSave').onclick = async () => {
+  const c = $('invCode').value.trim();
+  if(c.length < 4) return toast('Use at least 4 characters.');
+  try{ await setDoc(doc(db,'config','invite'), { code: c }); toast('Family code saved'); }catch(e){ toast('Could not save code.'); }
+};
 async function loadAdmin(){
-  const box = $('tAdmin');
-  box.innerHTML = '<div class="empty">লোড হচ্ছে...</div>';
+  const box = $('adminList');
+  box.innerHTML = '<div class="empty">Loading…</div>';
   try{
     const us = await getDocs(collection(db,'users'));
     const rows = await Promise.all(us.docs.map(async d => {
@@ -287,194 +658,192 @@ async function loadAdmin(){
       return { u: d.data(), friends: f.docs.map(x => x.data()) };
     }));
     rows.sort((a,b) => b.friends.length - a.friends.length);
-    box.innerHTML = `<div class="sec">মোট সদস্য: ${rows.length}</div>` + rows.map(r => `
-      <div class="row" style="align-items:flex-start">
-        <div class="av" style="background:${color(r.u.displayName)}">${esc(ini(r.u.displayName))}</div>
-        <div class="grow">
-          <b>${esc(r.u.displayName)} <small>@${esc(r.u.username)}</small></b>
-          <small>${r.friends.length} জন বন্ধু</small>
-          <div style="font-size:.85rem;margin-top:3px">${r.friends.length ? r.friends.map(x => esc(x.displayName)).join(', ') : '<span style="opacity:.5">কোনো বন্ধু নেই</span>'}</div>
-        </div>
-      </div>`).join('') + '<div style="padding:10px 8px"><button class="btn ghost sm" id="admRef">রিফ্রেশ</button></div>';
+    box.innerHTML = `<div class="sec">Members: ${rows.length}</div>` + rows.map(r => `
+      <div class="row" style="align-items:flex-start">${avatar(r.u)}
+        <div class="grow"><b>${esc(r.u.displayName)} <small style="display:inline">@${esc(r.u.username)}</small></b>
+          <small>${r.friends.length} friend${r.friends.length === 1 ? '' : 's'}</small>
+          <div style="font-size:.85rem;margin-top:3px">${r.friends.length ? r.friends.map(x => esc(x.displayName)).join(', ') : '<span style="opacity:.5">No friends yet</span>'}</div>
+        </div></div>`).join('') + '<div style="padding:10px 8px"><button class="btn ghost sm" id="admRef">Refresh</button></div>';
     $('admRef').onclick = loadAdmin;
-  }catch(e){ box.innerHTML = '<div class="empty">অ্যাডমিন অ্যাক্সেস নেই বা rules আপডেট হয়নি।</div>'; }
-}
-
-/* ================= FRIEND REQUESTS ================= */
-$('sGo').onclick = async () => {
-  const q = $('sQ').value.trim().toLowerCase(); const box = $('sRes');
-  if(!q) return;
-  box.innerHTML = '<div class="empty">খুঁজছি...</div>';
-  try{
-    const u = await getDoc(doc(db,'usernames',q));
-    if(!u.exists()) return box.innerHTML = '<div class="empty">এই username এ কেউ নেই।</div>';
-    const uid = u.data().uid;
-    if(uid === me.uid) return box.innerHTML = '<div class="empty">এটা আপনার নিজের username।</div>';
-    const p = (await getDoc(doc(db,'users',uid))).data();
-    const already = !!friends[uid];
-    box.innerHTML = `<div class="row">
-      <div class="av" style="background:${color(p.displayName)}">${esc(ini(p.displayName))}</div>
-      <div class="grow"><b>${esc(p.displayName)}</b><small>@${esc(p.username)}</small></div>
-      ${already ? '<small>বন্ধু ✓</small>' : '<button class="btn sm" id="reqBtn">Request</button>'}</div>`;
-    if(!already) $('reqBtn').onclick = async () => {
-      try{
-        await setDoc(doc(db,'requests',`${me.uid}_${uid}`), { from: me.uid, to: uid, fromName: me.displayName, fromUsername: me.username, status: 'pending' });
-        $('reqBtn').outerHTML = '<small>পাঠানো হয়েছে ✓</small>';
-      }catch(e){ $('reqBtn').outerHTML = '<small>আগেই পাঠানো হয়েছে</small>'; }
-    };
-  }catch(e){ box.innerHTML = '<div class="empty">খোঁজা যায়নি, আবার চেষ্টা করুন।</div>'; }
-};
-
-function renderReqs(list){
-  $('reqBadge').style.display = list.length ? '' : 'none';
-  $('reqBadge').textContent = list.length;
-  $('reqList').innerHTML = list.length ? list.map(r => `
-    <div class="row">
-      <div class="av" style="background:${color(r.fromName)}">${esc(ini(r.fromName))}</div>
-      <div class="grow"><b>${esc(r.fromName)}</b><small>@${esc(r.fromUsername)}</small></div>
-      <button class="btn sm" data-a="${r.id}">Accept</button>
-      <button class="btn sm ghost" data-r="${r.id}">✕</button>
-    </div>`).join('') : '<div class="empty">কোনো রিকোয়েস্ট নেই।</div>';
-  $('reqList').querySelectorAll('[data-a]').forEach(b => b.onclick = () => accept(list.find(r=>r.id===b.dataset.a)));
-  $('reqList').querySelectorAll('[data-r]').forEach(b => b.onclick = () => deleteDoc(doc(db,'requests',b.dataset.r)));
-}
-async function accept(r){
-  const batch = writeBatch(db);
-  batch.update(doc(db,'requests',r.id), { status: 'accepted' });
-  batch.set(doc(db,'users',me.uid,'friends',r.from), { username: r.fromUsername, displayName: r.fromName });
-  batch.set(doc(db,'users',r.from,'friends',me.uid), { username: me.username, displayName: me.displayName });
-  await batch.commit();
-  await deleteDoc(doc(db,'requests',r.id)).catch(()=>{});
+  }catch(e){ box.innerHTML = '<div class="empty">No admin access, or the Firestore rules were not updated.</div>'; }
 }
 
 /* ================= CHAT ================= */
-const chatId = (a,b) => [a,b].sort().join('_');
+function updateChatHeader(){
+  if(!curFriend) return;
+  const p = prof(curFriend.id);
+  $('cName').textContent = p.displayName || '';
+  $('cSub').textContent = statusOf(p);
+  $('cAv').innerHTML = avatar(p, 40);
+}
+$('cWho').onclick = () => {
+  if(!curFriend) return;
+  const p = prof(curFriend.id);
+  showSheet(`<div class="pcard">${avatar(p, 96)}<h2>${esc(p.displayName)}</h2><small>@${esc(p.username)}</small>
+    <small style="margin-top:10px">${esc(p.about || 'Hey there! I am using Amader Kuthuri')}</small>
+    <small style="margin-top:6px">${esc(statusOf(p))}</small></div>
+    <div class="acts"><button class="btn ghost" id="shClose">Close</button></div>`);
+  $('shClose').onclick = closeSheet;
+};
 
 async function openChat(fid){
-  curFriend = { id: fid, ...friends[fid] };
-  $('cName').textContent = curFriend.displayName;
-  const av = $('cAv'); av.textContent = ini(curFriend.displayName); av.style.background = color(curFriend.displayName);
-  $('msgs').innerHTML = ''; pending = null; $('pv').style.display = 'none';
+  if(!friends[fid]) return;
+  curFriend = { id: fid };
+  updateChatHeader();
+  $('msgs').innerHTML = ''; $('msgs').dataset.init = ''; pending = null; $('pv').style.display = 'none';
   view('vChat');
   const cid = chatId(me.uid, fid), cref = doc(db,'chats',cid);
-  try{ if(!(await getDoc(cref)).exists()) await setDoc(cref, { members: [me.uid, fid] }); }catch(e){ console.error(e); }
+  try{ if(!(await getDoc(cref)).exists()) await setDoc(cref, { members: [me.uid, fid], lastTs: 0, unread: {} }); }
+  catch(e){ console.error(e); toast('Could not open this chat.'); }
+  updateDoc(cref, { ['unread.' + me.uid]: 0 }).catch(()=>{});
   if(chatUnsub) chatUnsub();
-  chatUnsub = onSnapshot(query(collection(db,'chats',cid,'messages'), orderBy('ts')), s => {
-    const box = $('msgs');
+  chatUnsub = onSnapshot(query(collection(db,'chats',cid,'messages'), orderBy('ts')), { includeMetadataChanges: true }, s => {
+    lastSnap = s;
+    const box = $('msgs'), nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
     box.innerHTML = s.docs.map(d => {
       const m = d.data(), out = m.from === me.uid;
-      const t = new Date(m.ts).toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});
-      return `<div class="b ${out?'out':'in'}">${m.photo?`<img src="${m.photo}">`:''}${m.text?`<span>${esc(m.text)}</span>`:''}<small>${t}</small></div>`;
+      const t = new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const tick = !out ? '' : d.metadata.hasPendingWrites ? ' <span class="tk">🕓</span>' : m.seen ? ' <span class="tk seen">✓✓</span>' : ' <span class="tk">✓</span>';
+      return `<div class="b ${out ? 'out' : 'in'}" data-id="${d.id}" data-out="${out ? 1 : 0}">${m.photo ? `<img src="${m.photo}">` : ''}${m.text ? `<span>${esc(m.text)}</span>` : ''}<small>${t}${tick}</small></div>`;
     }).join('');
-    box.scrollTop = box.scrollHeight;
+    box.querySelectorAll('.b[data-out="1"]').forEach(el => el.onclick = () => askDelete(el.dataset.id));
+    if(nearBottom || !box.dataset.init){ box.scrollTop = box.scrollHeight; box.dataset.init = '1'; }
+    markSeen(s);
   });
 }
-$('cBack').onclick = () => { if(chatUnsub){ chatUnsub(); chatUnsub=null; } curFriend=null; view('vMain'); };
+function markSeen(s){
+  if(document.hidden || !curFriend || !s) return;
+  const unseen = s.docs.filter(d => { const m = d.data(); return m.from !== me.uid && !m.seen && !d.metadata.hasPendingWrites; });
+  if(!unseen.length) return;
+  const b = writeBatch(db);
+  unseen.forEach(d => b.update(d.ref, { seen: true, seenAt: Date.now() }));
+  b.commit().catch(()=>{});
+  updateDoc(doc(db,'chats',chatId(me.uid, curFriend.id)), { ['unread.' + me.uid]: 0 }).catch(()=>{});
+}
+function askDelete(mid){
+  showSheet(`<h3 style="margin:0 0 6px">Delete message?</h3><div style="opacity:.7">It will be removed for everyone in this chat.</div>
+    <div class="acts"><button class="btn ghost" id="dNo">Cancel</button><button class="btn red" id="dYes">Delete</button></div>`);
+  $('dNo').onclick = closeSheet;
+  $('dYes').onclick = async () => {
+    closeSheet();
+    try{ await deleteDoc(doc(db,'chats',chatId(me.uid, curFriend.id),'messages',mid)); }
+    catch(e){ toast('Could not delete the message.'); }
+  };
+}
+$('cBack').onclick = goHome;
 
 async function sendMsg(){
   const text = $('mIn').value.trim();
-  if(!text && !pending) return;
-  const data = { from: me.uid, ts: Date.now() };
+  if((!text && !pending) || !curFriend) return;
+  const fid = curFriend.id, cid = chatId(me.uid, fid);
+  const data = { from: me.uid, ts: Date.now(), seen: false };
   if(text) data.text = text;
   if(pending) data.photo = pending;
-  $('mIn').value = ''; pending = null; $('pv').style.display = 'none';
-  try{ await addDoc(collection(db,'chats',chatId(me.uid,curFriend.id),'messages'), data); }
-  catch(e){ alert('মেসেজ পাঠানো যায়নি: ' + e.message); }
+  const preview = text || '📷 Photo';
+  $('mIn').value = ''; $('mIn').style.height = 'auto'; pending = null; $('pv').style.display = 'none';
+  addDoc(collection(db,'chats',cid,'messages'), data).catch(() => toast('Message could not be sent.'));
+  updateDoc(doc(db,'chats',cid), { lastText: preview.slice(0,80), lastTs: data.ts, lastFrom: me.uid, ['unread.' + fid]: increment(1) }).catch(()=>{});
 }
 $('send').onclick = sendMsg;
-$('mIn').addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); }});
-
-/* photo + auto compress */
+$('mIn').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); } });
+$('mIn').addEventListener('input', function(){ this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px'; });
 $('attach').onclick = () => $('file').click();
 $('pvX').onclick = () => { pending = null; $('pv').style.display = 'none'; };
-$('file').onchange = e => {
-  const f = e.target.files[0]; if(!f) return;
-  const img = new Image();
-  img.onload = () => {
-    let maxW = 900, q = 0.7, out;
-    do{
-      const sc = Math.min(1, maxW / img.width), c = document.createElement('canvas');
-      c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      out = c.toDataURL('image/jpeg', q); maxW *= .8; q -= .08;
-    } while(out.length > 700000 && maxW > 200);   // Firestore doc limit 1MB
-    pending = out;
-    $('pvImg').src = out;
+$('file').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  try{
+    const out = await compressPhoto(f);
+    pending = out; $('pvImg').src = out;
     $('pvNote').textContent = `${Math.round(f.size/1024)}KB → ${Math.round(out.length*.75/1024)}KB`;
     $('pv').style.display = 'flex';
-  };
-  img.src = URL.createObjectURL(f); e.target.value = '';
+  }catch(err){ toast('Could not read that image.'); }
 };
 
 /* ================= CALLING (WebRTC + Firestore signaling) ================= */
-let callState = null; // { id, pc, local, role, unsubs[], video, timer }
-let ringT = null, ringI = null;
+let callState = null, starting = false, inc = null, ringI = null;
 
 function ring(on){
   clearInterval(ringI); ringI = null;
   if(!on) return;
-  try{
-    const ctx = ring.ctx || (ring.ctx = new (window.AudioContext||window.webkitAudioContext)());
-    ringI = setInterval(() => {
-      const o = ctx.createOscillator(), g = ctx.createGain();
-      o.frequency.value = 480; g.gain.value = .15; o.connect(g); g.connect(ctx.destination);
-      o.start(); o.stop(ctx.currentTime + .4);
-      navigator.vibrate && navigator.vibrate(300);
-    }, 1500);
-  }catch(e){}
+  ringI = setInterval(() => { beep(); navigator.vibrate && navigator.vibrate(300); }, 1500);
 }
-
-function showCallUI(name, video, stat){
-  $('callName').textContent = name; $('callStat').textContent = stat;
-  const av = $('callAv'); av.textContent = ini(name); av.style.background = color(name);
+function showCallUI(p, video, stat){
+  $('callName').textContent = p.displayName || ''; $('callStat').textContent = stat;
+  $('callAv').innerHTML = avatar({ ...p, online: false }, 90);
   $('camB').style.display = video ? '' : 'none';
   $('localV').style.display = video ? '' : 'none';
   $('call').classList.add('on');
 }
-
 async function getMedia(video){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw { name: 'NoMedia' };
   return navigator.mediaDevices.getUserMedia({ audio: true, video: video ? { facingMode: 'user' } : false });
 }
-
-function makePC(local, remoteTrackCb){
+function mediaError(e){
+  const wv = /; wv\)/.test(navigator.userAgent);
+  if(wv || e.name === 'NoMedia') toast('Calls do not work inside this APK (no mic/camera permission). Open the link in Chrome, or install it from Chrome.');
+  else if(e.name === 'NotAllowedError') toast('Microphone/camera permission is blocked. Allow it in your browser/site settings.');
+  else if(e.name === 'NotFoundError') toast('No microphone/camera found.');
+  else toast('Could not start the call.');
+}
+function makePC(local){
   const pc = new RTCPeerConnection(ICE);
   local.getTracks().forEach(t => pc.addTrack(t, local));
   const remote = new MediaStream();
-  pc.ontrack = e => { e.streams[0].getTracks().forEach(t => remote.addTrack(t)); $('remoteV').srcObject = remote; remoteTrackCb && remoteTrackCb(); };
+  pc.ontrack = e => { e.streams[0].getTracks().forEach(t => remote.addTrack(t)); $('remoteV').srcObject = remote; $('callStat').textContent = ''; };
+  pc.onconnectionstatechange = () => {
+    if(['failed','disconnected'].includes(pc.connectionState)) $('callStat').textContent = 'Connection problem…';
+    if(pc.connectionState === 'connected') $('callStat').textContent = '';
+  };
   return pc;
 }
 
 async function startCall(video){
-  if(callState || !curFriend) return;
+  if(callState || starting || !curFriend) return;
+  starting = true;
+  const f = curFriend.id, fp = prof(f);
   let local;
-  try{ local = await getMedia(video); }catch(e){ return alert('মাইক/ক্যামেরার permission দিন।'); }
-  $('localV').srcObject = local;
-  const f = curFriend;
-  showCallUI(f.displayName, video, 'রিং হচ্ছে...');
-  const callRef = doc(collection(db,'calls'));
-  const pc = makePC(local, () => $('callStat').textContent = '');
-  callState = { id: callRef.id, pc, local, role: 'caller', unsubs: [], video };
-  pc.onicecandidate = e => e.candidate && addDoc(collection(callRef,'callerCandidates'), e.candidate.toJSON());
-  pc.onconnectionstatechange = () => { if(['failed','disconnected'].includes(pc.connectionState)) $('callStat').textContent = 'নেটওয়ার্ক সমস্যা...'; if(pc.connectionState==='connected') $('callStat').textContent=''; };
-  const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
-  await setDoc(callRef, { caller: me.uid, callee: f.id, callerName: me.displayName, video, status: 'ringing', created: Date.now(), offer: { type: offer.type, sdp: offer.sdp } });
-  ring(true);
-  callState.unsubs.push(onSnapshot(callRef, async s => {
-    const d = s.data(); if(!d) return;
-    if(d.answer && !pc.currentRemoteDescription){ ring(false); $('callStat').textContent='সংযোগ হচ্ছে...'; await pc.setRemoteDescription(d.answer); }
-    if(d.status === 'declined'){ $('callStat').textContent='কল রিসিভ হয়নি'; endCall(false, 1200); }
-    if(d.status === 'ended') endCall(false);
-  }));
-  callState.unsubs.push(onSnapshot(collection(callRef,'calleeCandidates'), s => s.docChanges().forEach(c => c.type==='added' && pc.addIceCandidate(c.doc.data()).catch(()=>{}))));
-  callState.timer = setTimeout(() => { if(callState && !pc.currentRemoteDescription){ $('callStat').textContent='কেউ ধরেনি'; endCall(true, 1200); } }, 45000);
+  try{ local = await getMedia(video); }catch(e){ starting = false; return mediaError(e); }
+  try{
+    $('localV').srcObject = local;
+    showCallUI(fp, video, 'Calling…');
+    const callRef = doc(collection(db,'calls'));
+    const pc = makePC(local);
+    const queue = [];
+    callState = { id: callRef.id, pc, local, unsubs: [], video };
+    pc.onicecandidate = e => e.candidate && addDoc(collection(callRef,'callerCandidates'), e.candidate.toJSON());
+    const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+    await setDoc(callRef, { caller: me.uid, callee: f, callerName: me.displayName, video, status: 'ringing', created: Date.now(), offer: { type: offer.type, sdp: offer.sdp } });
+    ring(true);
+    callState.unsubs.push(onSnapshot(callRef, async s => {
+      const d = s.data(); if(!d || !callState) return;
+      if(d.answer && !pc.currentRemoteDescription){
+        ring(false); $('callStat').textContent = 'Connecting…';
+        await pc.setRemoteDescription(d.answer);
+        queue.splice(0).forEach(c => pc.addIceCandidate(c).catch(()=>{}));
+      }
+      if(d.status === 'declined'){ $('callStat').textContent = 'Declined'; endCall(false, 1200); }
+      if(d.status === 'ended') endCall(false);
+    }));
+    callState.unsubs.push(onSnapshot(collection(callRef,'calleeCandidates'), s => s.docChanges().forEach(c => {
+      if(c.type !== 'added') return;
+      if(pc.remoteDescription) pc.addIceCandidate(c.doc.data()).catch(()=>{}); else queue.push(c.doc.data());
+    })));
+    callState.timer = setTimeout(() => { if(callState && !pc.currentRemoteDescription){ $('callStat').textContent = 'No answer'; endCall(true, 1200); } }, 45000);
+  }catch(e){
+    console.error(e); toast('Could not start the call.');
+    local.getTracks().forEach(t => t.stop()); $('call').classList.remove('on'); callState = null; ring(false);
+  }
+  starting = false;
 }
 
-let inc = null;
 function showIncoming(id, c){
   inc = { id, c };
-  $('inName').textContent = c.callerName; $('inType').textContent = c.video ? 'ভিডিও কল' : 'ভয়েস কল';
-  const av = $('inAv'); av.textContent = ini(c.callerName); av.style.background = color(c.callerName);
+  const p = prof(c.caller);
+  const named = { ...p, displayName: p.displayName || c.callerName };
+  $('inName').textContent = named.displayName; $('inType').textContent = c.video ? 'Video call' : 'Voice call';
+  $('inAv').innerHTML = avatar({ ...named, online: false }, 96);
   $('incoming').classList.add('on'); ring(true);
+  if(document.hidden) notify(named.displayName, 'Incoming ' + (c.video ? 'video' : 'voice') + ' call', () => {});
 }
 $('decB').onclick = async () => {
   ring(false); $('incoming').classList.remove('on');
@@ -483,29 +852,37 @@ $('decB').onclick = async () => {
 };
 $('accB').onclick = async () => {
   ring(false); $('incoming').classList.remove('on');
+  if(!inc) return;
   const { id, c } = inc; inc = null;
   let local;
-  try{ local = await getMedia(c.video); }catch(e){ updateDoc(doc(db,'calls',id),{status:'declined'}); return alert('মাইক/ক্যামেরার permission দিন।'); }
-  $('localV').srcObject = local;
-  showCallUI(c.callerName, c.video, 'সংযোগ হচ্ছে...');
-  const callRef = doc(db,'calls',id);
-  const pc = makePC(local, () => $('callStat').textContent = '');
-  callState = { id, pc, local, role: 'callee', unsubs: [], video: c.video };
-  pc.onicecandidate = e => e.candidate && addDoc(collection(callRef,'calleeCandidates'), e.candidate.toJSON());
-  await pc.setRemoteDescription(c.offer);
-  const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
-  await updateDoc(callRef, { answer: { type: ans.type, sdp: ans.sdp }, status: 'active' });
-  callState.unsubs.push(onSnapshot(collection(callRef,'callerCandidates'), s => s.docChanges().forEach(ch => ch.type==='added' && pc.addIceCandidate(ch.doc.data()).catch(()=>{}))));
-  callState.unsubs.push(onSnapshot(callRef, s => { const d = s.data(); if(d && d.status === 'ended') endCall(false); }));
+  try{ local = await getMedia(c.video); }
+  catch(e){ updateDoc(doc(db,'calls',id), { status: 'declined' }).catch(()=>{}); return mediaError(e); }
+  try{
+    $('localV').srcObject = local;
+    const p = prof(c.caller);
+    showCallUI({ ...p, displayName: p.displayName || c.callerName }, c.video, 'Connecting…');
+    const callRef = doc(db,'calls',id);
+    const pc = makePC(local);
+    callState = { id, pc, local, unsubs: [], video: c.video };
+    pc.onicecandidate = e => e.candidate && addDoc(collection(callRef,'calleeCandidates'), e.candidate.toJSON());
+    await pc.setRemoteDescription(c.offer);
+    const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
+    await updateDoc(callRef, { answer: { type: ans.type, sdp: ans.sdp }, status: 'active' });
+    callState.unsubs.push(onSnapshot(collection(callRef,'callerCandidates'), s => s.docChanges().forEach(ch => ch.type === 'added' && pc.addIceCandidate(ch.doc.data()).catch(()=>{}))));
+    callState.unsubs.push(onSnapshot(callRef, s => { const d = s.data(); if(d && d.status === 'ended') endCall(false); }));
+  }catch(e){
+    console.error(e); toast('Could not connect the call.');
+    local.getTracks().forEach(t => t.stop()); $('call').classList.remove('on'); callState = null;
+  }
 };
 
-function endCall(notify = true, delay = 0){
+function endCall(notifyOther = true, delay = 0){
   const cs = callState; if(!cs) return;
   callState = null; ring(false); clearTimeout(cs.timer);
-  if(notify) updateDoc(doc(db,'calls',cs.id), { status: 'ended' }).catch(()=>{});
+  if(notifyOther) updateDoc(doc(db,'calls',cs.id), { status: 'ended' }).catch(()=>{});
   setTimeout(() => {
-    cs.unsubs.forEach(f=>f());
-    cs.local.getTracks().forEach(t=>t.stop());
+    cs.unsubs.forEach(f => f());
+    cs.local.getTracks().forEach(t => t.stop());
     cs.pc.close();
     $('remoteV').srcObject = null; $('localV').srcObject = null;
     $('call').classList.remove('on');
@@ -513,7 +890,7 @@ function endCall(notify = true, delay = 0){
   }, delay);
 }
 $('endB').onclick = () => endCall(true);
-$('muteB').onclick = () => { if(!callState) return; const t = callState.local.getAudioTracks()[0]; t.enabled = !t.enabled; $('muteB').classList.toggle('off', !t.enabled); };
+$('muteB').onclick = () => { if(!callState) return; const t = callState.local.getAudioTracks()[0]; if(!t) return; t.enabled = !t.enabled; $('muteB').classList.toggle('off', !t.enabled); };
 $('camB').onclick = () => { if(!callState) return; const t = callState.local.getVideoTracks()[0]; if(!t) return; t.enabled = !t.enabled; $('camB').classList.toggle('off', !t.enabled); };
 $('cVoice').onclick = () => startCall(false);
 $('cVideo').onclick = () => startCall(true);
